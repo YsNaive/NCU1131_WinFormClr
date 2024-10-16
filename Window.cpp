@@ -3,19 +3,52 @@
 #include <string>
 using CppCLRWinFormsProject::Window;
 
+auto obstacle_setup = Start::Create([]() {
+	auto obj = new Obstacle();
+	obj->collider.boxes.push_back({ 100,100,200,10 });
+	obj->collider.boxes.push_back({ 100,100,10,200 });
+	obj->collider.circles.push_back({ { 250,250 }, 40 });
+	});
+
 auto app_start = Start::Create([]() {
 	auto player = new Player();
 	});
 
 auto app_update = Update::Create([]() {
-	for (auto* obj : GameObject::GetInstances())
+	auto objList = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
+	auto objCount = objList.size();
+	if (GetKeyDown(Keys::F3))
+		DebugMode = !DebugMode;
+	// do update
+	for (auto* obj : objList) {
 		obj->Update();
+	};
+	// do collide test
+	for (int i = 0; i < objCount; i++) {
+		for (int j = i + 1; j < objCount; j++) {
+			auto lhs = objList[i];
+			auto rhs = objList[j];
+			if (lhs->CollideWith(rhs)) {
+				lhs->OnCollide(rhs);
+				rhs->OnCollide(lhs);
+			}
+		}
+	}
 	});
 
 auto app_render = OnPaint::Create([]() {
-	for (auto* obj : GameObject::GetInstances()) {
+	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
+	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer > rhs->render_layer; });
+	
+	for (auto* obj : sorted_obj) {
 		Drawer::SetTransform(obj);
 		obj->Render();
+	}
+	if (DebugMode) {
+		for (auto* obj : sorted_obj) {
+			Drawer::SetTransform(obj);
+			obj->collider.Render();
+		}
 	}
 	});
 
@@ -29,6 +62,7 @@ auto value_setup = PreUpdate::Create([]() {
 	screenSize.y -= 39;
 	});
 auto value_clear = LateUpdate::Create([]() {
-	getKey.clear();
+	getKeyUp.clear();
+	getKeyDown.clear();
 	Window::instance->Invalidate();
 	});

@@ -21,6 +21,14 @@
 
 #include "callib_config.h"
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
+
 namespace callib {
 	using namespace std;
 
@@ -678,10 +686,10 @@ namespace callib {
 
 		Rect operator& (const Rect& other) {
 			Rect result;
-			result.width = std::max(0.0f, std::min(this->xMax(), other.xMax()) - std::max(x, other.x));
-			result.height = std::max(0.0f, std::min(this->yMax(), other.yMax()) - std::max(y, other.y));
-			result.x = std::max(x, other.x);
-			result.y = std::max(y, other.y);
+			result.width  = std::max(0.0f, std::min(this->get_xMax(), other.get_xMax()) - std::max(this->x, other.x));
+			result.height = std::max(0.0f, std::min(this->get_yMax(), other.get_yMax()) - std::max(this->y, other.y));
+			result.x = std::max(this->x, other.x);
+			result.y = std::max(this->y, other.y);
 			return result;
 		}
 

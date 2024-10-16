@@ -3,8 +3,6 @@
 #include "Core.h"
 namespace CppCLRWinFormsProject {
 
-
-
 	public ref class Window : public System::Windows::Forms::Form
 	{
 	private: System::Windows::Forms::Timer^ timer_update;
@@ -17,8 +15,9 @@ namespace CppCLRWinFormsProject {
 			instance = this;
 			InitializeComponent();
 			this->FormBorderStyle = Windows::Forms::FormBorderStyle::Sizable;
-			this->DoubleBuffered = true; 
-			this->KeyPress += gcnew KeyPressEventHandler(this, &Window::OnKeyPress);
+			this->DoubleBuffered  = true; 
+			this->KeyDown += gcnew KeyEventHandler(this, &Window::OnKeyDown);
+			this->KeyUp   += gcnew KeyEventHandler(this, &Window::OnKeyUp);
 
 			Start::Invoke();
 		}
@@ -85,9 +84,18 @@ namespace CppCLRWinFormsProject {
 		OnPaint::Invoke();
 	}
 
-	private: virtual void OnKeyPress(Object^ sender, KeyPressEventArgs^ e)
+	private: virtual void OnKeyDown(Object^ sender, KeyEventArgs^ e)
 	{
-		getKey.insert(e->KeyChar);
+		if (!getKey.count(e->KeyValue)) {
+			getKeyDown.insert(e->KeyValue);
+		}
+		getKey.insert(e->KeyValue);
+	}
+
+	private: virtual void OnKeyUp(Object^ sender, KeyEventArgs^ e)
+	{
+		getKey.erase(e->KeyValue); 
+		getKeyUp.insert(e->KeyValue);
 	}
 
 	private: System::Void timer_update_Tick(System::Object^ sender, System::EventArgs^ e)
