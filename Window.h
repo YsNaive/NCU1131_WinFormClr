@@ -16,8 +16,9 @@ namespace CppCLRWinFormsProject {
 			InitializeComponent();
 			this->FormBorderStyle = Windows::Forms::FormBorderStyle::Sizable;
 			this->DoubleBuffered  = true; 
-			this->KeyDown += gcnew KeyEventHandler(this, &Window::OnKeyDown);
-			this->KeyUp   += gcnew KeyEventHandler(this, &Window::OnKeyUp);
+			this->KeyDown    += gcnew KeyEventHandler  (this, &Window::OnKeyDown);
+			this->KeyUp      += gcnew KeyEventHandler  (this, &Window::OnKeyUp);
+			this->MouseWheel += gcnew MouseEventHandler(this, &Window::OnMouseWheel);
 
 			Start::Invoke();
 		}
@@ -96,6 +97,12 @@ namespace CppCLRWinFormsProject {
 	{
 		getKey.erase(e->KeyValue); 
 		getKeyUp.insert(e->KeyValue);
+	}
+
+	void OnMouseWheel(Object^ sender, MouseEventArgs^ e)
+	{
+		mainCamera.targetScale += sgn(e->Delta) * 0.1;
+		mainCamera.targetScale = clamp(1.0f, 2.5f, mainCamera.targetScale);
 	}
 
 	private: System::Void timer_update_Tick(System::Object^ sender, System::EventArgs^ e)

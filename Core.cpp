@@ -27,11 +27,12 @@ void Drawer::AddScale(Vector2 scale)
 	Window::instance->graphics->ScaleTransform(scale.x, scale.y);
 }
 
-void Drawer::SetRenderTarget(GameObject* obj)
+void Drawer::SetRenderTarget(GameObject* obj, Camera* camera)
 {
 	Window::instance->graphics->ResetTransform();
+	AddScale({ camera->scale, camera->scale });
 	AddPosition(-mainCamera.position);
-	AddPosition(screenSize / 2.0f);
+	AddPosition((screenSize / 2.0f) / camera->scale);
 	AddPosition(obj->position);
 	AddRotation(obj->rotation);
 }
@@ -108,6 +109,7 @@ void Camera::Update()
 	auto dir = Player::instance->position - position;
 	dir *= 0.1;
 	position += dir;
+	scale += (targetScale - scale)*0.15;
 }
 
 void Camera::Render()
@@ -154,8 +156,8 @@ Player::Player()
 	tag.Add(Tag_Player);
 	position = { 200,200 };
 	rotation = 45;
-	auto size = 35.0f;
-	collider.boxes.push_back({ -size / 2.0f, -size / 2.0f , size, size });
+	auto scale = 35.0f;
+	collider.boxes.push_back({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 }
 
 void Player::Update()
@@ -230,10 +232,9 @@ void Obstacle::Render()
 		Drawer::AddFillCircle(Color(.1, .2, .1), circle);
 	}
 }
-int hc = 0;
-void Obstacle::OnCollide(GameObject* other)
+
+void Obstacle::OnCollide(GameObject* other, CollideInfo info)
 {
-	cout << "HIT" << hc++ << '\n';
 }
 
 Entity::Entity()
@@ -262,16 +263,18 @@ CollideInfo Collider::CollideWith(Collider& other)
 		for (auto p : lhs.vertices) {
 			if (Graph2D::is_collide(p, rhs)) {
 				ret->is_collide = true;
-				return true;
+				break;
 			}
 		}
-		for (auto l : lhs.get_lines()) {
-			if (Graph2D::is_collide(l, rhs)) {
-				ret->is_collide = true;
-				return true;
+		if (!ret->is_collide) {
+			for (auto l : lhs.get_lines()) {
+				if (Graph2D::is_collide(l, rhs)) {
+					ret->is_collide = true;
+					break;
+				}
 			}
 		}
-		return false;
+		return ret->is_collide;
 		};
 	auto box_circle = [](Polygon2D& box, Circle& circle, CollideInfo* ret) {
 		float min_distance = numeric_limits<float>().max();
@@ -348,18 +351,23 @@ vector<Circle> Collider::GetWorldPositionCircles()
 }
 
 Bullet::Bullet(float direction, float speed, float destoryDistance)
-	: direction(direction), speed(speed)
+	: direction(direction), speed(speed), destoryDistance(destoryDistance)
 {
 	tag.Add(Tag_Bullet);
-	collider.circles.push_back(Circle({ 0,0 }, 2.5));
+	collider.circles.push_back(Circle({ 0,0 }, 3.5));
 }
 
 void Bullet::Update()
 {
 	auto theta = DEG2RAD * direction;
-	position.x += speed * cos(theta);
-	position.y += speed * sin(theta);
+	position.x += speed * sin(theta);
+	position.y += speed * -cos(theta);
 	movedDistance += speed;
-	//if (movedDistance > destoryDistance)
-	//	is_destory = true;
+	if (movedDistance > destoryDistance)
+		is_destory = true;
+}
+
+void Bullet::Render()
+{
+	Drawer::AddFillCircle(Color(.9, .4, .4), collider.circles[0]);
 }

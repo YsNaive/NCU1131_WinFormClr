@@ -56,8 +56,8 @@ public:
         for (Inherit_T* func : _get_invoke_set())
             func->m_func(args...);
     }
-    void* operator new(size_t size) {
-        void* ptr = ::operator new(size);
+    void* operator new(size_t scale) {
+        void* ptr = ::operator new(scale);
         _get_invoke_set().insert((Inherit_T*)ptr);
         return ptr;
     }
@@ -131,7 +131,7 @@ public:
     static const unordered_set<GameObject*>& GetInstances();
     inline virtual void Update() {};
     inline virtual void Render() {};
-    inline virtual void OnCollide(GameObject* other) {};
+    inline virtual void OnCollide(GameObject* other,CollideInfo collideInfo) {};
     Tag tag;
     int render_layer = 0;
     bool is_destory = false;
@@ -143,21 +143,11 @@ public:
     Collider collider;
 };
 
-class Drawer {
-public:
-    static void AddPosition(Vector2 position);
-    static void AddRotation(float   rotation);
-    static void AddScale   (Vector2 scale);
-    static void SetRenderTarget(GameObject* obj);
-    static void AddCircle    (Color color, Circle circle, float thickness = 1);
-    static void AddFillCircle(Color color, Circle circle);
-    static void AddRect    (Color color, Rect rect, float thickness = 1);
-    static void AddFillRect(Color color, Rect rect);
-};
 
 class Camera : public GameObject{
 public:
-    float size;
+    float scale = 1;
+    float targetScale = 1;
 
     Vector2 WorldToScreen(const Vector2& pos);
     Vector2 ScreenToWorld(const Vector2& pos);
@@ -166,6 +156,18 @@ public:
 
     void Update() override;
     void Render() override;
+};
+
+class Drawer {
+public:
+    static void AddPosition(Vector2 position);
+    static void AddRotation(float   rotation);
+    static void AddScale   (Vector2 scale);
+    static void SetRenderTarget(GameObject* obj, Camera* camera);
+    static void AddCircle    (Color color, Circle circle, float thickness = 1);
+    static void AddFillCircle(Color color, Circle circle);
+    static void AddRect    (Color color, Rect rect, float thickness = 1);
+    static void AddFillRect(Color color, Rect rect);
 };
 
 class Entity : public GameObject {
@@ -178,12 +180,14 @@ public:
 
 class Bullet : public GameObject {
 public:
-    Bullet(float direction, float speed, float destoryDistance = 400);
+    Bullet(float direction, float speed, float destoryDistance = 200);
     float direction;
     float speed;
     float destoryDistance;
     float movedDistance = 0;
+
     void Update() override;
+    void Render() override;
 };
 
 class Player : public Entity {
@@ -199,7 +203,7 @@ public:
 class Obstacle : public GameObject {
 public:
     void Render() override;
-    void OnCollide(GameObject* other);
+    void OnCollide(GameObject* other, CollideInfo info);
 };
 
 extern Vector2	screenSize;

@@ -106,8 +106,8 @@ namespace callib {
 
 	template<class... Args>
 	string FormatString(const char* format, const Args&... args) {
-		auto size = snprintf(nullptr, 0, format, args...);
-		auto buffer = new char[size + 1];
+		auto scale = snprintf(nullptr, 0, format, args...);
+		auto buffer = new char[scale + 1];
 		sprintf(buffer, format, args...);
 		auto ret = string(buffer);
 		delete[] buffer;
@@ -533,8 +533,8 @@ namespace callib {
 			: Rect(0, 0, 0, 0) {}
 		T_Rect(T x, T y, T w, T h)
 			: x(x), y(y), width(w), height(h) {}
-		T_Rect(const Vector2& position, const Vector2& size)
-			: Rect(position.x, position.y, size.x, size.y) {}
+		T_Rect(const Vector2& position, const Vector2& scale)
+			: Rect(position.x, position.y, scale.x, scale.y) {}
 
 		T x, y, width, height;
 
@@ -563,9 +563,9 @@ namespace callib {
 		const Vector2 get_size() const {
 			return { width,height };
 		}
-		void		  set_size(const Vector2& size) {
-			width = size.x;
-			height = size.y;
+		void		  set_size(const Vector2& scale) {
+			width = scale.x;
+			height = scale.y;
 		}
 		const Vector2 get_center() const {
 			return { x + (width / (T)2), y + (height / (T)2) };

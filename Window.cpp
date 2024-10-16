@@ -30,8 +30,8 @@ auto app_update = Update::Create([]() {
 			auto rhs = objList[j];
 			auto collideInfo = lhs->collider.CollideWith(rhs->collider);
 			if (collideInfo.is_collide) {
-				lhs->OnCollide(rhs);
-				rhs->OnCollide(lhs);
+				lhs->OnCollide(rhs, collideInfo);
+				rhs->OnCollide(lhs, collideInfo);
 			}
 		}
 	}
@@ -41,12 +41,12 @@ auto app_render = OnPaint::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer > rhs->render_layer; });
 	for (auto* obj : sorted_obj) {
-		Drawer::SetRenderTarget(obj);
+		Drawer::SetRenderTarget(obj, &mainCamera);
 		obj->Render();
 	}
 	if (DebugMode) {
 		for (auto* obj : sorted_obj) {
-			Drawer::SetRenderTarget(obj);
+			Drawer::SetRenderTarget(obj, &mainCamera);
 			obj->collider.Render();
 		}
 	}
