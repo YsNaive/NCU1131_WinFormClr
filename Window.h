@@ -103,6 +103,13 @@ namespace CppCLRWinFormsProject {
 		PreUpdate::Invoke();
 		Update::Invoke();
 		LateUpdate::Invoke();
+		vector<GameObject*> toDestory;
+		for (auto obj : GameObject::GetInstances()) {
+			if (obj->is_destory)
+				toDestory.push_back(obj);
+		}
+		for (auto obj : toDestory)
+			delete obj;
 	}
 	
 	private: System::Void timer_second_Tick(System::Object^ sender, System::EventArgs^ e) {

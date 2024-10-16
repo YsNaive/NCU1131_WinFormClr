@@ -27,8 +27,9 @@ using System::Drawing::Graphics;
 #define DEG2RAD 0.01745329251
 #define RAD2DEG 57.2957795457
 
-const string Tag_Entity = "Player";
+const string Tag_Entity = "Entity";
 const string Tag_Player = "Player";
+const string Tag_Bullet = "Bullet";
 
 template<class Inherit_T, class Ret_T, class... Args_T>
 class GlobalEvent {
@@ -107,8 +108,6 @@ public:
 class GameObject;
 struct CollideInfo {
     bool    is_collide;
-    Vector2 collidePoint;
-    Line2D  normalLine;
 };
 class Collider {
 public:
@@ -117,46 +116,46 @@ public:
     vector<Circle> circles;
     
     void Render();
-    void CollideWith(Collider& other);
+    CollideInfo CollideWith(Collider& other);
+    vector<Polygon2D> GetWorldPositionBoxes();
+    vector<Circle> GetWorldPositionCircles();
 };
 
 class GameObject {
-protected:
-    GameObject();
-    ~GameObject();
-
 private:
     static       unordered_set<GameObject*>& m_GetInstances();
+protected:
+    GameObject();
 public:
+    ~GameObject();
     static const unordered_set<GameObject*>& GetInstances();
     inline virtual void Update() {};
     inline virtual void Render() {};
     inline virtual void OnCollide(GameObject* other) {};
     Tag tag;
     int render_layer = 0;
+    bool is_destory = false;
 
     Vector2 position = { 0,0 };
     float   rotation = 0;
     Matrix2x2 get_rotateMatrix();
 
     Collider collider;
-    bool has_rigidbody = false;
-    bool CollideWith(GameObject* other);
 };
 
 class Drawer {
 public:
-    static void SetPosition(Vector2 position);
-    static void SetRotation(float   rotation);
-    static void SetScale   (Vector2 scale);
-    static void SetTransform(GameObject* obj);
+    static void AddPosition(Vector2 position);
+    static void AddRotation(float   rotation);
+    static void AddScale   (Vector2 scale);
+    static void SetRenderTarget(GameObject* obj);
     static void AddCircle    (Color color, Circle circle, float thickness = 1);
     static void AddFillCircle(Color color, Circle circle);
     static void AddRect    (Color color, Rect rect, float thickness = 1);
     static void AddFillRect(Color color, Rect rect);
 };
 
-class Camera : GameObject{
+class Camera : public GameObject{
 public:
     float size;
 
@@ -175,6 +174,16 @@ public:
     float max_hp;
     float min_hp;
     float hp;
+};
+
+class Bullet : public GameObject {
+public:
+    Bullet(float direction, float speed, float destoryDistance = 400);
+    float direction;
+    float speed;
+    float destoryDistance;
+    float movedDistance = 0;
+    void Update() override;
 };
 
 class Player : public Entity {

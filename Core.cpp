@@ -12,26 +12,28 @@ bool DebugMode = true;
 
 Camera mainCamera;
 
-void Drawer::SetPosition(Vector2 position)
+void Drawer::AddPosition(Vector2 position)
 {
 	Window::instance->graphics->TranslateTransform(position.x, position.y);
 }
 
-void Drawer::SetRotation(float rotation)
+void Drawer::AddRotation(float rotation)
 {
 	Window::instance->graphics->RotateTransform(rotation);
 }
 
-void Drawer::SetScale(Vector2 scale)
+void Drawer::AddScale(Vector2 scale)
 {
 	Window::instance->graphics->ScaleTransform(scale.x, scale.y);
 }
 
-void Drawer::SetTransform(GameObject* obj)
+void Drawer::SetRenderTarget(GameObject* obj)
 {
 	Window::instance->graphics->ResetTransform();
-	SetPosition(obj->position);
-	SetRotation(obj->rotation);
+	AddPosition(-mainCamera.position);
+	AddPosition(screenSize / 2.0f);
+	AddPosition(obj->position);
+	AddRotation(obj->rotation);
 }
 
 void Drawer::AddCircle(Color color, Circle circle, float thickness)
@@ -104,7 +106,7 @@ Rect Camera::ScreenToWorld(const Rect& rect)
 void Camera::Update()
 {
 	auto dir = Player::instance->position - position;
-	dir *= 0.9;
+	dir *= 0.1;
 	position += dir;
 }
 
@@ -135,14 +137,10 @@ Matrix2x2 GameObject::get_rotateMatrix()
 	return ret;
 }
 
-bool GameObject::CollideWith(GameObject* other)
-{
-	return false;
-}
-
 GameObject::GameObject()
 {
 	m_GetInstances().insert(this);
+	collider.gameObject = this;
 }
 
 GameObject::~GameObject()
@@ -186,6 +184,11 @@ void Player::Update()
 		offset *= curSpeed;
 		position += offset;
 	}
+
+	if (GetKeyDown(Keys::Space)) {
+		auto bullet = new Bullet(rotation, 8);
+		bullet->position = this->position;
+	}
 }
 
 void Player::Render()
@@ -227,10 +230,10 @@ void Obstacle::Render()
 		Drawer::AddFillCircle(Color(.1, .2, .1), circle);
 	}
 }
-
+int hc = 0;
 void Obstacle::OnCollide(GameObject* other)
 {
-
+	cout << "HIT" << hc++ << '\n';
 }
 
 Entity::Entity()
@@ -248,10 +251,115 @@ void Collider::Render()
 	}
 }
 
-void Collider::CollideWith(Collider& other)
+CollideInfo Collider::CollideWith(Collider& other)
 {
+	auto self_world_boxes    = this->GetWorldPositionBoxes();
+	auto self_world_circles  = this->GetWorldPositionCircles();
+	auto other_world_boxes   = other.GetWorldPositionBoxes();
+	auto other_world_circles = other.GetWorldPositionCircles();
 
-	auto rotatePoint = [](Vector2 point) {
-
+	auto box_box = [](Polygon2D& lhs, Polygon2D& rhs, CollideInfo* ret) {
+		for (auto p : lhs.vertices) {
+			if (Graph2D::is_collide(p, rhs)) {
+				ret->is_collide = true;
+				return true;
+			}
+		}
+		for (auto l : lhs.get_lines()) {
+			if (Graph2D::is_collide(l, rhs)) {
+				ret->is_collide = true;
+				return true;
+			}
+		}
+		return false;
 		};
+	auto box_circle = [](Polygon2D& box, Circle& circle, CollideInfo* ret) {
+		float min_distance = numeric_limits<float>().max();
+		for (auto l : box.get_lines()) {
+			auto distance = (Graph2D::get_closest(circle.center, l) - circle.center).get_length();
+			min_distance = min(min_distance, distance);
+		}
+		if (min_distance <= circle.radius) {
+			ret->is_collide = true;
+			return true;
+		}
+		return false;
+		};
+	auto circle_circle = [](Circle& lhs, Circle& rhs, CollideInfo* ret) {
+		auto distance = (lhs.center - rhs.center).get_length();
+		if (distance <= (lhs.radius + rhs.radius)) {
+			ret->is_collide = true;
+			return true;
+		}
+		return false;
+		};
+
+	CollideInfo ret;
+	ret.is_collide = false;
+	for (auto selfBox : self_world_boxes) {
+		for (auto otherBox : other_world_boxes) {
+			if (box_box(selfBox, otherBox, &ret))
+				return ret;
+		}
+		for (auto otherCircle : other_world_circles) {
+			if (box_circle(selfBox, otherCircle, &ret))
+				return ret;
+		}
+	}
+	for (auto selfCircle : self_world_circles) {
+		for (auto otherBox : other_world_boxes) {
+			if (box_circle(otherBox, selfCircle, &ret))
+				return ret;
+		}
+		for (auto otherCircle : other_world_circles) {
+			if (circle_circle(selfCircle, otherCircle, &ret))
+				return ret;
+		}
+	}
+	return ret;
+}
+
+vector<Polygon2D> Collider::GetWorldPositionBoxes()
+{
+	auto rotateMatrix = gameObject->get_rotateMatrix();
+	vector<Polygon2D> polys;
+	polys.reserve(boxes.size());
+	for (auto rect : boxes) {
+		vector<Vector2> path;
+		for (auto point : {
+			Vector2(rect.get_xMin(), rect.get_yMin()),
+			Vector2(rect.get_xMin(), rect.get_yMax()),
+			Vector2(rect.get_xMax(), rect.get_yMax()),
+			Vector2(rect.get_xMax(), rect.get_yMin()),
+			}) path.push_back((rotateMatrix * point) + gameObject->position);
+		polys.push_back(Polygon2D(path));
+	}
+	return polys;
+}
+
+vector<Circle> Collider::GetWorldPositionCircles()
+{
+	auto rotateMatrix = gameObject->get_rotateMatrix();
+	vector<Circle> ret;
+	ret.reserve(circles.size());
+	for (auto circle : circles)
+		ret.push_back({ (rotateMatrix * circle.center) + gameObject->position, circle.radius });
+	return ret;
+}
+
+Bullet::Bullet(float direction, float speed, float destoryDistance)
+	: direction(direction), speed(speed)
+{
+	tag.Add(Tag_Bullet);
+	collider.circles.push_back(Circle({ 0,0 }, 2.5));
+}
+
+void Bullet::Update()
+{
+	auto theta = DEG2RAD * direction;
+	position.x += speed * cos(theta);
+	position.y += speed * sin(theta);
+	movedDistance += speed;
+	//if (movedDistance > destoryDistance)
+	//	is_destory = true;
 }

@@ -28,7 +28,8 @@ auto app_update = Update::Create([]() {
 		for (int j = i + 1; j < objCount; j++) {
 			auto lhs = objList[i];
 			auto rhs = objList[j];
-			if (lhs->CollideWith(rhs)) {
+			auto collideInfo = lhs->collider.CollideWith(rhs->collider);
+			if (collideInfo.is_collide) {
 				lhs->OnCollide(rhs);
 				rhs->OnCollide(lhs);
 			}
@@ -39,14 +40,13 @@ auto app_update = Update::Create([]() {
 auto app_render = OnPaint::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer > rhs->render_layer; });
-	
 	for (auto* obj : sorted_obj) {
-		Drawer::SetTransform(obj);
+		Drawer::SetRenderTarget(obj);
 		obj->Render();
 	}
 	if (DebugMode) {
 		for (auto* obj : sorted_obj) {
-			Drawer::SetTransform(obj);
+			Drawer::SetRenderTarget(obj);
 			obj->collider.Render();
 		}
 	}
