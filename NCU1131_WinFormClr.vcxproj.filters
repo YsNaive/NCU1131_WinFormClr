@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{511e400a-efbb-4795-b640-c02b452caf43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\misc">
+      <UniqueIdentifier>{11d522d7-73bf-4f35-a672-47f49cb37439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gameObject">
+      <UniqueIdentifier>{4e07952f-b693-4ed5-929e-420aab4ef3ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -20,42 +29,57 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="callib.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files\misc</Filter>
     </ClInclude>
     <ClInclude Include="callib_config.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="callib.h">
+      <Filter>Header Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
     <ClCompile Include="CppCLR_WinFormsProject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="callib.cpp">
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>Source Files\gameObject</Filter>
     </ClCompile>
-    <ClCompile Include="callib.cpp">
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source Files\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bullet.cpp">
+      <Filter>Source Files\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -105,6 +105,26 @@ public:
     inline bool Contains(string value) { return tags.count(value); };
 };
 
+class Input {
+public:
+    static unordered_set<int> s_getKey;
+    static unordered_set<int> s_getKeyDown;
+    static unordered_set<int> s_getKeyUp;
+    static bool s_mouseState[2][3]; // [left/right] [down/hold/up]
+
+    static bool GetKey    (Keys keyCode);
+    static bool GetKeyDown(Keys keyCode);
+    static bool GetKeyUp  (Keys keyCode);
+    static bool GetKey    (MouseButtons keyCode);
+    static bool GetKeyDown(MouseButtons keyCode);
+    static bool GetKeyUp  (MouseButtons keyCode);
+
+    static float Time;
+    static Vector2	ScreenSize;
+    static Vector2	MousePosition;
+    static float MouseScroller;
+};
+
 class GameObject;
 struct CollideInfo {
     bool    is_collide;
@@ -125,6 +145,7 @@ class GameObject {
 private:
     static       unordered_set<GameObject*>& m_GetInstances();
 protected:
+    bool mark_destory = false;
     GameObject();
 public:
     ~GameObject();
@@ -134,7 +155,8 @@ public:
     inline virtual void OnCollide(GameObject* other,CollideInfo collideInfo) {};
     Tag tag;
     int render_layer = 0;
-    bool is_destory = false;
+    inline bool is_Destory() { return mark_destory; }
+    void Destory();
 
     Vector2 position = { 0,0 };
     float   rotation = 0;
@@ -142,7 +164,6 @@ public:
 
     Collider collider;
 };
-
 
 class Camera : public GameObject{
 public:
@@ -168,6 +189,7 @@ public:
     static void AddFillCircle(Color color, Circle circle);
     static void AddRect    (Color color, Rect rect, float thickness = 1);
     static void AddFillRect(Color color, Rect rect);
+    static void AddText(Color color,const string& text, Vector2 position, float textSize = 16);
 };
 
 class Entity : public GameObject {
@@ -206,15 +228,6 @@ public:
     void OnCollide(GameObject* other, CollideInfo info);
 };
 
-extern Vector2	screenSize;
-extern Vector2	mousePosition;
-extern set<int> getKey;
-extern set<int> getKeyDown;
-extern set<int> getKeyUp;
 extern bool DebugMode;
-
-bool GetKey    (Keys keyCode);
-bool GetKeyDown(Keys keyCode);
-bool GetKeyUp  (Keys keyCode);
 
 extern Camera mainCamera;

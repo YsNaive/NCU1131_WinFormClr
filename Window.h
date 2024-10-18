@@ -19,7 +19,8 @@ namespace CppCLRWinFormsProject {
 			this->KeyDown    += gcnew KeyEventHandler  (this, &Window::OnKeyDown);
 			this->KeyUp      += gcnew KeyEventHandler  (this, &Window::OnKeyUp);
 			this->MouseWheel += gcnew MouseEventHandler(this, &Window::OnMouseWheel);
-
+			this->MouseDown  += gcnew MouseEventHandler(this, &Window::OnMouseDown);
+			this->MouseUp    += gcnew MouseEventHandler(this, &Window::OnMouseUp);
 			Start::Invoke();
 		}
 
@@ -87,22 +88,35 @@ namespace CppCLRWinFormsProject {
 
 	private: virtual void OnKeyDown(Object^ sender, KeyEventArgs^ e)
 	{
-		if (!getKey.count(e->KeyValue)) {
-			getKeyDown.insert(e->KeyValue);
+		if (!Input::s_getKey.count(e->KeyValue)) {
+			Input::s_getKeyDown.insert(e->KeyValue);
 		}
-		getKey.insert(e->KeyValue);
+		Input::s_getKey.insert(e->KeyValue);
 	}
 
 	private: virtual void OnKeyUp(Object^ sender, KeyEventArgs^ e)
 	{
-		getKey.erase(e->KeyValue); 
-		getKeyUp.insert(e->KeyValue);
+		Input::s_getKey.erase(e->KeyValue); 
+		Input::s_getKeyUp.insert(e->KeyValue);
+	}
+
+	void OnMouseDown(Object^ sender, MouseEventArgs^ e)
+	{
+		using MouseButtons = System::Windows::Forms::MouseButtons;
+		Input::s_mouseState[(e->Button == MouseButtons::Left) ? 0 : 1][0] = true;
+		Input::s_mouseState[(e->Button == MouseButtons::Left) ? 0 : 1][1] = true;
+	}
+
+	void OnMouseUp(Object^ sender, MouseEventArgs^ e)
+	{
+		using MouseButtons = System::Windows::Forms::MouseButtons;
+		Input::s_mouseState[(e->Button == MouseButtons::Left) ? 0 : 1][1] = false;
+		Input::s_mouseState[(e->Button == MouseButtons::Left) ? 0 : 1][2] = true;
 	}
 
 	void OnMouseWheel(Object^ sender, MouseEventArgs^ e)
 	{
-		mainCamera.targetScale += sgn(e->Delta) * 0.1;
-		mainCamera.targetScale = clamp(1.0f, 2.5f, mainCamera.targetScale);
+		Input::MouseScroller = e->Delta;
 	}
 
 	private: System::Void timer_update_Tick(System::Object^ sender, System::EventArgs^ e)
@@ -112,11 +126,12 @@ namespace CppCLRWinFormsProject {
 		LateUpdate::Invoke();
 		vector<GameObject*> toDestory;
 		for (auto obj : GameObject::GetInstances()) {
-			if (obj->is_destory)
+			if (obj->is_Destory())
 				toDestory.push_back(obj);
 		}
 		for (auto obj : toDestory)
 			delete obj;
+		Input::Time += 0.025;
 	}
 	
 	private: System::Void timer_second_Tick(System::Object^ sender, System::EventArgs^ e) {
