@@ -46,6 +46,11 @@ auto app_render = OnPaint::Create([]() {
 			Drawer::SetRenderTarget(obj, &mainCamera);
 			obj->collider.Render();
 		}
+		auto g = Window::instance->graphics;
+		g->ResetTransform();
+		Drawer::AddText({ .2f,.2f,.2f }, "mouse position ", { 0,0 });
+		Drawer::AddText({ .2f,.2f,.2f }, "    screen " + Input::MousePosition.to_string(), { 0,15 });
+		Drawer::AddText({ .2f,.2f,.2f }, "    world  " + mainCamera.ScreenToWorld(Input::MousePosition).to_string(), {0,30});
 	}
 	});
 

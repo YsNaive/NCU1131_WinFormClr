@@ -189,7 +189,7 @@ public:
     static void AddFillCircle(Color color, Circle circle);
     static void AddRect    (Color color, Rect rect, float thickness = 1);
     static void AddFillRect(Color color, Rect rect);
-    static void AddText(Color color,const string& text, Vector2 position, float textSize = 16);
+    static void AddText(Color color,const string& text, Vector2 position, float textSize = 14);
 };
 
 class Entity : public GameObject {

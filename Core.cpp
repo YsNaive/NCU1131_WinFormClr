@@ -77,7 +77,7 @@ void Drawer::AddText(Color color,const string& text, Vector2 position, float tex
 	auto font		= gcnew Drawing::Font("Consolas", textSize);
 
 	String^ clrStr = msclr::interop::marshal_as<String^>(text);
-	g->DrawString(clrStr, font, solidBrush, 10,10);
+	g->DrawString(clrStr, font, solidBrush, position.x, position.y);
 
 	delete solidBrush;
 	delete font;
