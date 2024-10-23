@@ -31,7 +31,8 @@ Matrix2x2 GameObject::get_rotateMatrix()
 GameObject::GameObject()
 {
 	m_GetInstances().insert(this);
-	collider.gameObject = this;
+	collider .gameObject = this;
+	rigidbody.gameObject = this;
 }
 
 GameObject::~GameObject()

@@ -10,19 +10,17 @@ Player::Player()
 	rotation = 45;
 	auto scale = 35.0f;
 	collider.boxes.push_back({ -scale / 2.0f, -scale / 2.0f , scale, scale });
+	speed = 0.15;
 }
 
 void Player::Update()
 {
-	curSpeed *= 0.9;
-	if (curSpeed < 0.1 && curSpeed > -0.1)
-		curSpeed = 0;
-
+	float force = 0;
 	if (Input::GetKey(Keys::W)) {
-		curSpeed += 0.25;
+		force += speed;
 	}
 	if (Input::GetKey(Keys::S)) {
-		curSpeed -= 0.25;
+		force -= speed;
 	}
 	if (Input::GetKey(Keys::A)) {
 		rotation -= 3;
@@ -30,14 +28,7 @@ void Player::Update()
 	if (Input::GetKey(Keys::D)) {
 		rotation += 3;
 	}
-	curSpeed = clamp(-maxSpeed, maxSpeed, curSpeed);
-
-	if (curSpeed != 0) {
-		auto rad = rotation * DEG2RAD;
-		Vector2 offset = { (float)sin(rad), -(float)cos(rad) };
-		offset *= curSpeed;
-		position += offset;
-	}
+	rigidbody.AddForce(rotation, force);
 
 	if (Input::GetKey(MouseButtons::Left)) {
 		auto bullet = new Bullet(rotation, 8);

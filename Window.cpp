@@ -4,7 +4,10 @@
 using CppCLRWinFormsProject::Window;
 
 auto obstacle_setup = Start::Create([]() {
-
+	for (int i = 0; i < 15; i++) {
+		auto obj = new NormalMonster();
+		obj->position = { (float)i,(float)i };
+	}
 	});
 
 auto app_start = Start::Create([]() {
@@ -18,6 +21,7 @@ auto app_update = Update::Create([]() {
 		DebugMode = !DebugMode;
 	// do update
 	for (auto* obj : objList) {
+		obj->rigidbody.Update();
 		obj->Update();
 	};
 	// do collide test

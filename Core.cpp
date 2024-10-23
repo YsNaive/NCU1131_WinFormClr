@@ -103,6 +103,22 @@ Entity::Entity()
 	tag.Add(Tag_Entity);
 }
 
+void Entity::ReciveDamage(float value, GameObject* sender)
+{
+	if (hp == numeric_limits<float>().min())
+		return;
+	value -= defence;
+	if (value < 0)
+		return;
+
+	hp -= value;
+	OnHurt();
+	if (hp < 0) {
+		OnDead();
+		hp = numeric_limits<float>().min();
+	}
+}
+
 void Collider::Render()
 {
 	for (auto rect : boxes) {
@@ -210,3 +226,39 @@ vector<Circle> Collider::GetWorldPositionCircles()
 		ret.push_back({ (rotateMatrix * circle.center) + gameObject->position, circle.radius });
 	return ret;
 }
+
+void Rigidbody::Update()
+{
+	if (!enable)
+		return;
+	if (!gameObject)
+		return;
+	auto offset = movement;
+	if (relate_rotation)
+		offset = gameObject->get_rotateMatrix() * offset;
+	
+	gameObject->position += offset;
+	movement *= decelerate;
+}
+
+void Rigidbody::AddForce(Vector2 force)
+{
+	movement += force;
+	if (movement.get_length() > maxSpeed)
+		movement.set_length(maxSpeed);
+}
+
+void Rigidbody::AddForce(Vector2 direction, float force)
+{
+	direction.set_length(force);
+	AddForce(direction);
+}
+
+void Rigidbody::AddForce(float rotation, float force)
+{
+	float rad = rotation * DEG2RAD;
+	Vector2  vec_force = { (float)sin(rad), -(float)cos(rad) };
+	vec_force.set_length(force);
+	AddForce(vec_force);
+}
+

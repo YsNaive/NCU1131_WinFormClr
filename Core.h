@@ -27,9 +27,10 @@ using System::Drawing::Graphics;
 #define DEG2RAD 0.01745329251
 #define RAD2DEG 57.2957795457
 
-const string Tag_Entity = "Entity";
-const string Tag_Player = "Player";
-const string Tag_Bullet = "Bullet";
+const string Tag_Entity  = "Entity";
+const string Tag_Player  = "Player";
+const string Tag_Monster = "Monster";
+const string Tag_Bullet  = "Bullet";
 
 template<class Inherit_T, class Ret_T, class... Args_T>
 class GlobalEvent {
@@ -140,6 +141,19 @@ public:
     vector<Polygon2D> GetWorldPositionBoxes();
     vector<Circle> GetWorldPositionCircles();
 };
+class Rigidbody {
+public:
+    GameObject* gameObject      = nullptr;
+    float       decelerate      = 0.9f;
+    float       maxSpeed        = 5.0f;
+    Vector2     movement        = { 0,0 };
+    bool        relate_rotation = false;
+    bool        enable          = true;
+    void Update();
+    void AddForce(Vector2 force);
+    void AddForce(Vector2 direction, float force);
+    void AddForce(float rotation, float force);
+};
 
 class GameObject {
 private:
@@ -163,6 +177,7 @@ public:
     Matrix2x2 get_rotateMatrix();
 
     Collider collider;
+    Rigidbody rigidbody;
 };
 
 class Camera : public GameObject{
@@ -198,6 +213,13 @@ public:
     float max_hp;
     float min_hp;
     float hp;
+    float defence;
+    float speed;
+
+    void ReciveDamage(float value, GameObject* sender);
+    inline void SendDamage(float value, Entity* reciver) { reciver->ReciveDamage(value, this); };
+    inline virtual void OnDead() {}
+    inline virtual void OnHurt() {}
 };
 
 class Bullet : public GameObject {
@@ -216,9 +238,20 @@ class Player : public Entity {
 public:
     static Player* instance;
     Player();
-    float maxSpeed = 4;
-    float curSpeed = 0;
     void Update() override;
+    void Render() override;
+};
+
+class Monster : public Entity {
+public:
+    Monster();
+    virtual void Update() override;
+    virtual void OnCollide(GameObject* other, CollideInfo collideInfo) override;
+};
+
+class NormalMonster : public Monster {
+public:
+    NormalMonster();
     void Render() override;
 };
 
