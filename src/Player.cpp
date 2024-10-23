@@ -10,7 +10,7 @@ Player::Player()
 	position = { 200,200 };
 	rotation = 45;
 	auto scale = 35.0f;
-	collider.boxes.push_back({ -scale / 2.0f, -scale / 2.0f , scale, scale });
+	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 	speed = 0.2;
 }
 
@@ -73,7 +73,7 @@ Exp::Exp(float value)
 	render_layer = Layer_Exp;
 	tag.Add(Tag_Exp);
 	rigidbody.decelerate = 0.95;
-	collider.circles.push_back({ {0,0},value * 3.0f });
+	collider.AddCircle({ {0,0},value * 3.0f });
 }
 
 void Exp::OnCollide(GameObject* other, CollideInfo collideInfo)
@@ -87,6 +87,6 @@ void Exp::OnCollide(GameObject* other, CollideInfo collideInfo)
 
 void Exp::Render()
 {
-	Drawer::AddFillCircle(Color(0.3, 1.0, 0.3), collider.circles[0]);
-	Drawer::AddCircle(Color(0.1, 0.6, 0.1), collider.circles[0]);
+	Drawer::AddFillCircle(Color(0.3, 1.0, 0.3), { {0,0}, value * 3.0f });
+	Drawer::AddCircle(Color(0.1, 0.6, 0.1), { {0,0}, value * 3.0f });
 }

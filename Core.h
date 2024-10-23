@@ -140,6 +140,8 @@ public:
 class GameObject;
 struct CollideInfo {
     bool    is_collide;
+    Line2D  hitLine;
+    Vector2 hitPoint;
 };
 class Collider {
 public:
@@ -148,15 +150,15 @@ public:
     static unordered_set<GameObject*> FindObject(const Circle& range);
     static void AddIgnore(const string lhs, const string rhs);
     static bool IsIgnore(GameObject* lhs, GameObject* rhs);
-
     GameObject* gameObject = nullptr;
-    vector<Rect> boxes;
-    vector<Circle> circles;
-    
+    Rect boundingBox;
+    vector<Polygon2D> hitboxes;
+    void UpdateBoundingBox();
+    void AddRect  (const Rect& rect);
+    void AddCircle(const Circle& circle);
     void Render();
     CollideInfo CollideWith(Collider& other);
-    vector<Polygon2D> GetWorldPositionBoxes();
-    vector<Circle> GetWorldPositionCircles();
+    vector<Polygon2D> GetWorldPositionHitboxes();
 };
 class Rigidbody {
 public:
@@ -224,6 +226,8 @@ public:
     static void AddFillCircle(Color color, Circle circle);
     static void AddRect    (Color color, Rect rect, float thickness = 1);
     static void AddFillRect(Color color, Rect rect);
+    static void AddPoly(Color color, Polygon2D& poly, float thickness = 1);
+    static void AddFillPoly(Color color, Polygon2D& poly);
     static void AddText(Color color,const string& text, Vector2 position, float textSize = 14);
 };
 

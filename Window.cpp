@@ -17,6 +17,7 @@ auto app_start = Start::Create([]() {
 auto collide_ignore_setup = Start::Create([]() {
 	Collider::AddIgnore(Tag_Exp, Tag_Monster);
 	Collider::AddIgnore(Tag_Exp, Tag_Bullet);
+	Collider::AddIgnore(Tag_Exp, Tag_Exp);
 	});
 
 auto app_update = Update::Create([]() {
@@ -34,9 +35,13 @@ auto app_update = Update::Create([]() {
 		for (int j = i + 1; j < objCount; j++) {
 			auto lhs = objList[i];
 			auto rhs = objList[j];
+			if ((lhs->position - rhs->position).get_length() > 40)
+				continue;
 			if (Collider::IsIgnore(lhs, rhs))
 				continue;
-			auto collideInfo = lhs->collider.CollideWith(rhs->collider);
+			auto collideInfo = (lhs->rigidbody.movement.get_length() > rhs->rigidbody.movement.get_length()) 
+				? lhs->collider.CollideWith(rhs->collider)
+				: rhs->collider.CollideWith(lhs->collider);
 			if (collideInfo.is_collide) {
 				lhs->OnCollide(rhs, collideInfo);
 				rhs->OnCollide(lhs, collideInfo);

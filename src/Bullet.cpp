@@ -5,7 +5,7 @@ Bullet::Bullet(float direction, float speed, float destoryDistance)
 	: direction(direction), speed(speed), destoryDistance(destoryDistance)
 {
 	tag.Add(Tag_Bullet);
-	collider.circles.push_back(Circle({ 0,0 }, 3.5));
+	collider.AddCircle(Circle({ 0,0 }, 3.5));
 }
 
 void Bullet::Update()
@@ -20,7 +20,7 @@ void Bullet::Update()
 
 void Bullet::Render()
 {
-	Drawer::AddFillCircle(Color(.9, .4, .4), collider.circles[0]);
+	Drawer::AddFillPoly(Color(.9, .4, .4), collider.hitboxes[0]);
 }
 
 void Bullet::OnCollide(GameObject* other, CollideInfo collideInfo)

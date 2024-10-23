@@ -22,6 +22,9 @@
     <Filter Include="Source Files\gameObject">
       <UniqueIdentifier>{4e07952f-b693-4ed5-929e-420aab4ef3ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{60ba92ef-3c08-4031-800c-527b5f45f876}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -84,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="src\Monster.cpp">
       <Filter>Source Files\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Drawer.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

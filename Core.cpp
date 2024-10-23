@@ -8,90 +8,8 @@ bool DebugMode = true;
 
 Camera mainCamera;
 
-void Drawer::AddPosition(Vector2 position)
-{
-	Window::instance->graphics->TranslateTransform(position.x, position.y);
-}
-
-void Drawer::AddRotation(float rotation)
-{
-	Window::instance->graphics->RotateTransform(rotation);
-}
-
-void Drawer::AddScale(Vector2 scale)
-{
-	Window::instance->graphics->ScaleTransform(scale.x, scale.y);
-}
-
-void Drawer::SetRenderTarget(GameObject* obj, Camera* camera)
-{
-	Window::instance->graphics->ResetTransform();
-	AddScale({ camera->scale, camera->scale });
-	AddPosition(-mainCamera.position);
-	AddPosition((Input::ScreenSize / 2.0f) / camera->scale);
-	AddPosition(obj->position);
-	AddRotation(obj->rotation);
-}
-
-void Drawer::AddCircle(Color color, Circle circle, float thickness)
-{
-	Graphics^ g = Window::instance->graphics;
-
-	Pen^ pen = gcnew Pen(color.ToDrawingColor(), thickness);
-	g->DrawEllipse(pen, circle.center.x - circle.radius, circle.center.y - circle.radius, circle.radius * 2, circle.radius * 2);
-	delete pen;
-}
-
-void Drawer::AddFillCircle(Color color, Circle circle)
-{
-	Graphics^ g = Window::instance->graphics;
-
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-	g->FillEllipse(solidBrush, circle.center.x - circle.radius, circle.center.y - circle.radius, circle.radius * 2, circle.radius * 2);
-	delete solidBrush;
-}
-
-void Drawer::AddRect(Color color, Rect rect, float thickness)
-{
-	Graphics^ g = Window::instance->graphics;
-	Vector2 center = rect.get_center();
-	Pen^ pen = gcnew Pen(color.ToDrawingColor(), thickness);
-	g->DrawRectangle(pen, rect.x, rect.y, rect.width, rect.height);
-	delete pen;
-}
-
-void Drawer::AddFillRect(Color color, Rect rect)
-{
-	Graphics^ g = Window::instance->graphics;
-	Vector2 center = rect.get_center();
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-
-	g->FillRectangle(solidBrush, rect.x, rect.y, rect.width, rect.height);
-	delete solidBrush;
-}
-
-void Drawer::AddText(Color color,const string& text, Vector2 position, float textSize)
-{
-	Graphics^ g = Window::instance->graphics;
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-	auto font		= gcnew Drawing::Font("Consolas", textSize);
-
-	String^ clrStr = msclr::interop::marshal_as<String^>(text);
-	g->DrawString(clrStr, font, solidBrush, position.x, position.y);
-
-	delete solidBrush;
-	delete font;
-	delete clrStr;
-}
-
 void Obstacle::Render()
 {
-	for (auto box : collider.boxes) {
-		Drawer::AddFillRect(Color(.1, .2, .1), box);
-	}
-	for (auto circle : collider.circles) {
-		Drawer::AddFillCircle(Color(.1, .2, .1), circle);
-	}
 }
 
 void Obstacle::OnCollide(GameObject* other, CollideInfo info)
@@ -140,7 +58,7 @@ unordered_set<GameObject*> Collider::FindObject(const Circle& range, function<bo
 {
 	unordered_set<GameObject*> ret;
 	Collider tempCollider;
-	tempCollider.circles.push_back(range);
+	tempCollider.AddCircle(range);
 	for (auto obj : GameObject::GetInstances()) {
 		if (!filter(obj))
 			continue;
@@ -160,31 +78,71 @@ void Collider::AddIgnore(const string lhs, const string rhs) {
 	GetIgnoreCollideList().push_back({ lhs, rhs }); if (lhs != rhs) GetIgnoreCollideList().push_back({ rhs, lhs });
 }
 
+void Collider::UpdateBoundingBox()
+{
+	boundingBox = { 0,0,0,0 };
+	for (auto& poly : hitboxes) {
+		auto box = poly.get_boundingBox();
+		if (boundingBox.width == 0 || boundingBox.height == 0) {
+			boundingBox = box;
+			continue;
+		}
+		if (boundingBox.get_xMin() > box.get_xMin())
+			boundingBox.set_xMin(box.get_xMin());
+		if (boundingBox.get_xMax() < box.get_xMax())
+			boundingBox.set_xMax(box.get_xMax());
+		if (boundingBox.get_yMin() > box.get_yMin())
+			boundingBox.set_yMin(box.get_yMin());
+		if (boundingBox.get_yMax() < box.get_yMax())
+			boundingBox.set_yMax(box.get_yMax());
+	}
+}
+
+void Collider::AddRect(const Rect& rect)
+{
+	hitboxes.push_back(Polygon2D({
+		{rect.x,		      rect.y			  },
+		{rect.x + rect.width, rect.y			  },
+		{rect.x + rect.width, rect.y + rect.height},
+		{rect.x,			  rect.y + rect.height},
+		}));
+}
+
+void Collider::AddCircle(const Circle& circle)
+{
+	const float step = (360.0 / 16.0) * DEG2RAD;
+	Polygon2D poly;
+	poly.vertices.resize(16);
+	float rad = 0.0;
+	for (int i = 0; i < 16; i++) {
+		poly.vertices[i] = Vector2( sin(rad), cos(rad) );
+		poly.vertices[i].set_length(circle.radius);
+		poly.vertices[i] += circle.center;
+		rad += step;
+	}
+	hitboxes.push_back(poly);
+}
+
 void Collider::Render()
 {
-	for (auto rect : boxes) {
-		Drawer::AddRect(Color(0, 1, 0), rect, 2);
-	}
-	for (auto circle : circles) {
-		Drawer::AddCircle(Color(0, 1, 0), circle, 2);
+	for (auto& poly : hitboxes) {
+		Drawer::AddPoly(Color(0, 1, 0), poly, 1);
 	}
 }
 
 CollideInfo Collider::CollideWith(Collider& other)
 {
-	auto self_world_boxes    = this->GetWorldPositionBoxes();
-	auto self_world_circles  = this->GetWorldPositionCircles();
-	auto other_world_boxes   = other.GetWorldPositionBoxes();
-	auto other_world_circles = other.GetWorldPositionCircles();
+	auto self_world_polys    = this->GetWorldPositionHitboxes();
+	auto other_world_polys   = other.GetWorldPositionHitboxes();
 
-	auto box_box = [](Polygon2D& lhs, Polygon2D& rhs, CollideInfo* ret) {
+	auto hitCheck = [](Polygon2D& lhs, Polygon2D& rhs, CollideInfo* ret) {
 		for (auto p : lhs.vertices) {
 			if (Graph2D::is_collide(p, rhs)) {
 				ret->is_collide = true;
 				break;
 			}
 		}
-		if (!ret->is_collide) {
+		if (ret->is_collide) {
 			for (auto l : lhs.get_lines()) {
 				if (Graph2D::is_collide(l, rhs)) {
 					ret->is_collide = true;
@@ -194,81 +152,52 @@ CollideInfo Collider::CollideWith(Collider& other)
 		}
 		return ret->is_collide;
 		};
-	auto box_circle = [](Polygon2D& box, Circle& circle, CollideInfo* ret) {
-		float min_distance = numeric_limits<float>().max();
-		for (auto l : box.get_lines()) {
-			auto distance = (Graph2D::get_closest(circle.center, l) - circle.center).get_length();
-			min_distance = min(min_distance, distance);
-		}
-		if (min_distance <= circle.radius) {
-			ret->is_collide = true;
-			return true;
-		}
-		return false;
-		};
-	auto circle_circle = [](Circle& lhs, Circle& rhs, CollideInfo* ret) {
-		auto distance = (lhs.center - rhs.center).get_length();
-		if (distance <= (lhs.radius + rhs.radius)) {
-			ret->is_collide = true;
-			return true;
-		}
-		return false;
-		};
 
 	CollideInfo ret;
 	ret.is_collide = false;
-	for (auto selfBox : self_world_boxes) {
-		for (auto otherBox : other_world_boxes) {
-			if (box_box(selfBox, otherBox, &ret))
-				return ret;
+	for (auto& p1 : self_world_polys) {
+		for (auto& p2 : other_world_polys) {
+			if (hitCheck(p1, p2, &ret))
+				break;
+			if (hitCheck(p2, p1, &ret))
+				break;
 		}
-		for (auto otherCircle : other_world_circles) {
-			if (box_circle(selfBox, otherCircle, &ret))
-				return ret;
-		}
+		if (ret.is_collide)
+			break;
 	}
-	for (auto selfCircle : self_world_circles) {
-		for (auto otherBox : other_world_boxes) {
-			if (box_circle(otherBox, selfCircle, &ret))
-				return ret;
-		}
-		for (auto otherCircle : other_world_circles) {
-			if (circle_circle(selfCircle, otherCircle, &ret))
-				return ret;
-		}
+
+	// find hit line (surface)
+	if (ret.is_collide) {
+		float min_distance = numeric_limits<float>().max();
+		for (auto& self_poly  : self_world_polys) {
+		for (auto& self_point : self_poly.vertices) {
+		for (auto& other_poly : other_world_polys) {
+		for (auto& other_line : other_poly.get_lines()) {
+			float distance = Graph2D::get_distance(self_point, other_line);
+			if (distance < min_distance) {
+				min_distance = distance;
+				ret.hitLine  = other_line;
+				ret.hitPoint = self_point;
+			}
+		}}}};
 	}
 	return ret;
 }
 
-vector<Polygon2D> Collider::GetWorldPositionBoxes()
+vector<Polygon2D> Collider::GetWorldPositionHitboxes()
 {
 	auto rotateMatrix = gameObject ? gameObject->get_rotateMatrix() : Matrix2x2::FromRotation(0);
 	Vector2 offset    = gameObject ? gameObject->position : Vector2(0, 0);
 
 	vector<Polygon2D> polys;
-	polys.reserve(boxes.size());
-	for (auto rect : boxes) {
-		vector<Vector2> path;
-		for (auto point : {
-			Vector2(rect.get_xMin(), rect.get_yMin()),
-			Vector2(rect.get_xMin(), rect.get_yMax()),
-			Vector2(rect.get_xMax(), rect.get_yMax()),
-			Vector2(rect.get_xMax(), rect.get_yMin()),
-			}) path.push_back((rotateMatrix * point) + offset);
-		polys.push_back(Polygon2D(path));
+	polys.reserve(hitboxes.size());
+	for (auto& poly : hitboxes) {
+		Polygon2D worldPoly(poly);
+		for (int i = 0, imax = poly.vertices.size(); i < imax; i++)
+			worldPoly.vertices[i] = (rotateMatrix * poly.vertices[i]) + offset;
+		polys.push_back(worldPoly);
 	}
 	return polys;
-}
-
-vector<Circle> Collider::GetWorldPositionCircles()
-{
-	auto rotateMatrix = gameObject ? gameObject->get_rotateMatrix() : Matrix2x2::FromRotation(0);
-	Vector2 offset    = gameObject ? gameObject->position : Vector2(0, 0);
-	vector<Circle> ret;
-	ret.reserve(circles.size());
-	for (auto circle : circles)
-		ret.push_back({ (rotateMatrix * circle.center) + offset, circle.radius });
-	return ret;
 }
 
 void Rigidbody::Update()

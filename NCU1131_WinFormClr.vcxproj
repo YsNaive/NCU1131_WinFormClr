@@ -151,6 +151,7 @@
     <ClCompile Include="CppCLR_WinFormsProject.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Drawer.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Monster.cpp" />
@@ -176,6 +177,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.h</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
