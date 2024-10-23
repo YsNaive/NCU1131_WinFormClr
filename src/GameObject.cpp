@@ -6,11 +6,20 @@ unordered_set<GameObject*>& GameObject::m_GetInstances()
 	static unordered_set<GameObject*> instances;
 	return instances;
 }
-
 const unordered_set<GameObject*>& GameObject::GetInstances()
 {
 	return m_GetInstances();
 }
+
+//unordered_map<string, unordered_set<GameObject*>>& GameObject::m_GetInstancesTable()
+//{
+//	static unordered_map<string, unordered_set<GameObject*>> instances;
+//	return instances;
+//}
+//const unordered_map<string, unordered_set<GameObject*>>& GameObject::GetInstancesTable()
+//{
+//	return m_GetInstancesTable();
+//}
 
 void GameObject::Destory()
 {
@@ -19,13 +28,7 @@ void GameObject::Destory()
 
 Matrix2x2 GameObject::get_rotateMatrix()
 {
-	Matrix2x2 ret;
-	auto theta = rotation * DEG2RAD;
-	ret.m00 = cos(theta);
-	ret.m10 = sin(theta);
-	ret.m01 = -ret.m10;
-	ret.m11 = ret.m00;
-	return ret;
+	return Matrix2x2::FromRotation(rotation);
 }
 
 GameObject::GameObject()

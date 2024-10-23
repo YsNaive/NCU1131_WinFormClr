@@ -186,6 +186,12 @@ namespace callib {
 
 		T x, y;
 
+		/* temp add in this project */
+		static Vector2 FromDegree(float deg) {
+			float rad = deg * 0.01745329251;
+			return { (float)sin(rad), -(float)cos(rad) };
+		}
+
 		Vector2	get_abs() const {
 			return { abs(x), abs(y) };
 		}

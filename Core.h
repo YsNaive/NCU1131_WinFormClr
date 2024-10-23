@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <msclr/marshal_cppstd.h>
 #include <unordered_map>
+#include"random"
 
 #include "callib.h"
 
@@ -29,8 +30,13 @@ using System::Drawing::Graphics;
 
 const string Tag_Entity  = "Entity";
 const string Tag_Player  = "Player";
+const string Tag_Exp     = "Exp";
 const string Tag_Monster = "Monster";
 const string Tag_Bullet  = "Bullet";
+
+const int Layer_Player  =  0;
+const int Layer_Exp     =  1;
+const int Layer_Monster = -1;
 
 template<class Inherit_T, class Ret_T, class... Args_T>
 class GlobalEvent {
@@ -80,6 +86,8 @@ public:
     inline Matrix2x2(float m00, float m01, float m10, float m11)
         :m00(m00), m01(m01), m10(m10), m11(m11) {}
 
+    static Matrix2x2 FromRotation(float degree);
+
     float m00;
     float m01;
     float m10;
@@ -120,6 +128,9 @@ public:
     static bool GetKeyDown(MouseButtons keyCode);
     static bool GetKeyUp  (MouseButtons keyCode);
 
+    static float RandomFloat(float min, float max);
+    static float RandomInt  (int include_min, int exclude_max);
+
     static float Time;
     static Vector2	ScreenSize;
     static Vector2	MousePosition;
@@ -132,6 +143,12 @@ struct CollideInfo {
 };
 class Collider {
 public:
+    static vector<pair<string, string>>& GetIgnoreCollideList();
+    static unordered_set<GameObject*> FindObject(const Circle& range, function<bool(GameObject*)> filter);
+    static unordered_set<GameObject*> FindObject(const Circle& range);
+    static void AddIgnore(const string lhs, const string rhs);
+    static bool IsIgnore(GameObject* lhs, GameObject* rhs);
+
     GameObject* gameObject = nullptr;
     vector<Rect> boxes;
     vector<Circle> circles;
@@ -157,13 +174,16 @@ public:
 
 class GameObject {
 private:
+    using InstancesTable = unordered_map<string, unordered_set<GameObject*>>;
     static       unordered_set<GameObject*>& m_GetInstances();
+    //static       InstancesTable& m_GetInstancesTable();
 protected:
     bool mark_destory = false;
     GameObject();
 public:
     ~GameObject();
     static const unordered_set<GameObject*>& GetInstances();
+    //static const InstancesTable& GetInstancesTable();
     inline virtual void Update() {};
     inline virtual void Render() {};
     inline virtual void OnCollide(GameObject* other,CollideInfo collideInfo) {};
@@ -229,17 +249,35 @@ public:
     float speed;
     float destoryDistance;
     float movedDistance = 0;
+    float damage = 1;
+    float penetrate = 0;
+    vector<GameObject*> hit_history;
 
-    void Update() override;
-    void Render() override;
+    virtual void Update() override;
+    virtual void Render() override;
+    virtual void OnCollide(GameObject* other, CollideInfo collideInfo);
+};
+
+class Exp : public GameObject {
+public:
+    Exp(float value);
+    float value;
+
+    virtual void OnCollide(GameObject* other, CollideInfo collideInfo);
+    virtual void Render() override;
 };
 
 class Player : public Entity {
 public:
     static Player* instance;
+
+    float attractExpRange = 70;
+
     Player();
-    void Update() override;
-    void Render() override;
+    void ResetState();
+    void ReciveExp(int value);
+    virtual void Update() override;
+    virtual void Render() override;
 };
 
 class Monster : public Entity {
@@ -247,11 +285,12 @@ public:
     Monster();
     virtual void Update() override;
     virtual void OnCollide(GameObject* other, CollideInfo collideInfo) override;
+    virtual void OnDead() override;
 };
 
 class NormalMonster : public Monster {
 public:
-    NormalMonster();
+    NormalMonster(float size_radius = 15);
     void Render() override;
 };
 

@@ -22,3 +22,17 @@ void Bullet::Render()
 {
 	Drawer::AddFillCircle(Color(.9, .4, .4), collider.circles[0]);
 }
+
+void Bullet::OnCollide(GameObject* other, CollideInfo collideInfo)
+{
+	if (find(hit_history.begin(), hit_history.end(), other) != hit_history.end())
+		return;
+	auto entity = dynamic_cast<Entity*>(other);
+	if (!entity)
+		return;
+
+	entity->ReciveDamage(damage, this);
+	penetrate--;
+	if (penetrate < 0)
+		Destory();
+}

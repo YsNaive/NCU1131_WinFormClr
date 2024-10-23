@@ -1,10 +1,27 @@
 #include "pch.h"
 #include "Core.h"
 
+// test code
+auto monster_test = LateUpdate::Create([]() {
+	int count = 0;
+	for (auto obj : GameObject::GetInstances()) {
+		if (obj->tag.Contains(Tag_Monster))
+			count++;
+	}
+	while (count < 10) {
+		auto obj = new NormalMonster(Input::RandomInt(12, 19));
+		auto offset = Vector2::FromDegree(Input::RandomFloat(0, 360));
+		offset.set_length(max(Input::ScreenSize.x, Input::ScreenSize.y));
+		obj->position = Player::instance->position + offset;
+		count++;
+	}
+	});
+
 Monster::Monster()
 {
+	render_layer = Layer_Monster;
 	tag.Add(Tag_Monster);
-	speed = 0.1;
+	speed = 0.15;
 }
 
 void Monster::Update()
@@ -22,9 +39,19 @@ void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 		rigidbody.AddForce(position - other->position, speed * 4.5f);
 }
 
-NormalMonster::NormalMonster()
+void Monster::OnDead()
 {
-	collider.circles.push_back(Circle({ 0,0 }, 15));
+	for (int i = 0, imax = Input::RandomInt(1, 4); i < imax; i++) {
+		auto obj = new Exp(1);
+		obj->position = position;
+		obj->rigidbody.AddForce(Input::RandomFloat(0, 360), 1.5);
+	}
+	Destory();
+}
+
+NormalMonster::NormalMonster(float size_radius)
+{
+	collider.circles.push_back(Circle({ 0,0 }, size_radius));
 }
 
 void NormalMonster::Render()

@@ -119,6 +119,47 @@ void Entity::ReciveDamage(float value, GameObject* sender)
 	}
 }
 
+bool Collider::IsIgnore(GameObject* lhs, GameObject* rhs)
+{
+	auto table = GetIgnoreCollideList();
+	for (auto& t1 : lhs->tag.tags) {
+		for (auto& t2 : rhs->tag.tags) {
+			if (find(table.begin(), table.end(), pair<string, string>(t1, t2)) != table.end())
+				return true;
+		}
+	}
+	return false;
+}
+
+vector<pair<string, string>>& Collider::GetIgnoreCollideList() {
+	static vector<pair<string, string>> instance; 
+	return instance;
+}
+
+unordered_set<GameObject*> Collider::FindObject(const Circle& range, function<bool(GameObject*)> filter)
+{
+	unordered_set<GameObject*> ret;
+	Collider tempCollider;
+	tempCollider.circles.push_back(range);
+	for (auto obj : GameObject::GetInstances()) {
+		if (!filter(obj))
+			continue;
+		if (tempCollider.CollideWith(obj->collider).is_collide)
+			ret.insert(obj);
+	}
+	return ret;
+}
+
+unordered_set<GameObject*> Collider::FindObject(const Circle& range)
+{ 
+	static auto filter = [](GameObject*) {return true; };
+	return FindObject(range, filter);
+}
+
+void Collider::AddIgnore(const string lhs, const string rhs) {
+	GetIgnoreCollideList().push_back({ lhs, rhs }); if (lhs != rhs) GetIgnoreCollideList().push_back({ rhs, lhs });
+}
+
 void Collider::Render()
 {
 	for (auto rect : boxes) {
@@ -201,7 +242,9 @@ CollideInfo Collider::CollideWith(Collider& other)
 
 vector<Polygon2D> Collider::GetWorldPositionBoxes()
 {
-	auto rotateMatrix = gameObject->get_rotateMatrix();
+	auto rotateMatrix = gameObject ? gameObject->get_rotateMatrix() : Matrix2x2::FromRotation(0);
+	Vector2 offset    = gameObject ? gameObject->position : Vector2(0, 0);
+
 	vector<Polygon2D> polys;
 	polys.reserve(boxes.size());
 	for (auto rect : boxes) {
@@ -211,7 +254,7 @@ vector<Polygon2D> Collider::GetWorldPositionBoxes()
 			Vector2(rect.get_xMin(), rect.get_yMax()),
 			Vector2(rect.get_xMax(), rect.get_yMax()),
 			Vector2(rect.get_xMax(), rect.get_yMin()),
-			}) path.push_back((rotateMatrix * point) + gameObject->position);
+			}) path.push_back((rotateMatrix * point) + offset);
 		polys.push_back(Polygon2D(path));
 	}
 	return polys;
@@ -219,11 +262,12 @@ vector<Polygon2D> Collider::GetWorldPositionBoxes()
 
 vector<Circle> Collider::GetWorldPositionCircles()
 {
-	auto rotateMatrix = gameObject->get_rotateMatrix();
+	auto rotateMatrix = gameObject ? gameObject->get_rotateMatrix() : Matrix2x2::FromRotation(0);
+	Vector2 offset    = gameObject ? gameObject->position : Vector2(0, 0);
 	vector<Circle> ret;
 	ret.reserve(circles.size());
 	for (auto circle : circles)
-		ret.push_back({ (rotateMatrix * circle.center) + gameObject->position, circle.radius });
+		ret.push_back({ (rotateMatrix * circle.center) + offset, circle.radius });
 	return ret;
 }
 
@@ -256,9 +300,18 @@ void Rigidbody::AddForce(Vector2 direction, float force)
 
 void Rigidbody::AddForce(float rotation, float force)
 {
-	float rad = rotation * DEG2RAD;
-	Vector2  vec_force = { (float)sin(rad), -(float)cos(rad) };
+	Vector2  vec_force = Vector2::FromDegree(rotation);
 	vec_force.set_length(force);
 	AddForce(vec_force);
 }
 
+Matrix2x2 Matrix2x2::FromRotation(float degree)
+{
+	Matrix2x2 ret;
+	auto theta = degree * DEG2RAD;
+	ret.m00 = cos(theta);
+	ret.m10 = sin(theta);
+	ret.m01 = -ret.m10;
+	ret.m11 = ret.m00;
+	return ret;
+}

@@ -5,13 +5,18 @@ using CppCLRWinFormsProject::Window;
 
 auto obstacle_setup = Start::Create([]() {
 	for (int i = 0; i < 15; i++) {
-		auto obj = new NormalMonster();
+		auto obj = new NormalMonster(10 + (rand()%5));
 		obj->position = { (float)i,(float)i };
 	}
 	});
 
 auto app_start = Start::Create([]() {
 	auto player = new Player();
+	});
+
+auto collide_ignore_setup = Start::Create([]() {
+	Collider::AddIgnore(Tag_Exp, Tag_Monster);
+	Collider::AddIgnore(Tag_Exp, Tag_Bullet);
 	});
 
 auto app_update = Update::Create([]() {
@@ -29,6 +34,8 @@ auto app_update = Update::Create([]() {
 		for (int j = i + 1; j < objCount; j++) {
 			auto lhs = objList[i];
 			auto rhs = objList[j];
+			if (Collider::IsIgnore(lhs, rhs))
+				continue;
 			auto collideInfo = lhs->collider.CollideWith(rhs->collider);
 			if (collideInfo.is_collide) {
 				lhs->OnCollide(rhs, collideInfo);
@@ -40,7 +47,7 @@ auto app_update = Update::Create([]() {
 
 auto app_render = OnPaint::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
-	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer > rhs->render_layer; });
+	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer < rhs->render_layer; });
 	for (auto* obj : sorted_obj) {
 		Drawer::SetRenderTarget(obj, &mainCamera);
 		obj->Render();
