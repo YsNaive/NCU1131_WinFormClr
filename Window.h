@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Core.h"
+
 namespace CppCLRWinFormsProject {
 
 	public ref class Window : public System::Windows::Forms::Form
 	{
 	private: System::Windows::Forms::Timer^ timer_update;
-	private: System::Windows::Forms::Timer^ timer_second;
+
 	public:
 		static Window^ instance;
 		Graphics^ graphics;
@@ -51,7 +52,6 @@ namespace CppCLRWinFormsProject {
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			this->timer_update = (gcnew System::Windows::Forms::Timer(this->components));
-			this->timer_second = (gcnew System::Windows::Forms::Timer(this->components));
 			this->SuspendLayout();
 			// 
 			// timer_update
@@ -60,15 +60,9 @@ namespace CppCLRWinFormsProject {
 			this->timer_update->Interval = 25;
 			this->timer_update->Tick += gcnew System::EventHandler(this, &Window::timer_update_Tick);
 			// 
-			// timer_second
-			// 
-			this->timer_second->Enabled = true;
-			this->timer_second->Interval = 1000;
-			this->timer_second->Tick += gcnew System::EventHandler(this, &Window::timer_second_Tick);
-			// 
 			// Window
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(11, 23);
+			this->AutoScaleDimensions = System::Drawing::SizeF(9, 19);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(582, 353);
 			this->Font = (gcnew System::Drawing::Font(L"Consolas", 12));
@@ -132,9 +126,6 @@ namespace CppCLRWinFormsProject {
 		for (auto obj : toDestory)
 			delete obj;
 		Input::Time += 0.025;
-	}
-	
-	private: System::Void timer_second_Tick(System::Object^ sender, System::EventArgs^ e) {
 	}
 	};
 }

@@ -4,7 +4,7 @@
 Bullet::Bullet(float direction, float speed, float destoryDistance)
 	: direction(direction), speed(speed), destoryDistance(destoryDistance)
 {
-	tag.Add(Tag_Bullet);
+	tag.Add(Tag::Bullet);
 	collider.AddCircle(Circle({ 0,0 }, 3.5));
 }
 

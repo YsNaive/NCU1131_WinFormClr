@@ -36,9 +36,10 @@ void Camera::Update()
 	auto dir = Player::instance->position - position;
 	dir *= 0.1;
 	position += dir;
-
-	mainCamera.targetScale += sgn(Input::MouseScroller) * 0.1;
-	mainCamera.targetScale = clamp(1.0f, 2.5f, mainCamera.targetScale);
+	if (Input::MouseScroller != 0) {
+		targetScale += sgn(Input::MouseScroller) * 0.1;
+		targetScale = clamp(1.0f, 2.5f, targetScale);
+	}
 	scale += (targetScale - scale) * 0.15;
 
 }

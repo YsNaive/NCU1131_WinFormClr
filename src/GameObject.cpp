@@ -11,16 +11,6 @@ const unordered_set<GameObject*>& GameObject::GetInstances()
 	return m_GetInstances();
 }
 
-//unordered_map<string, unordered_set<GameObject*>>& GameObject::m_GetInstancesTable()
-//{
-//	static unordered_map<string, unordered_set<GameObject*>> instances;
-//	return instances;
-//}
-//const unordered_map<string, unordered_set<GameObject*>>& GameObject::GetInstancesTable()
-//{
-//	return m_GetInstancesTable();
-//}
-
 void GameObject::Destory()
 {
 	mark_destory = true;

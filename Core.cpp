@@ -18,7 +18,6 @@ void Obstacle::OnCollide(GameObject* other, CollideInfo info)
 
 Entity::Entity()
 {
-	tag.Add(Tag_Entity);
 }
 
 void Entity::ReciveDamage(float value, GameObject* sender)
@@ -39,18 +38,17 @@ void Entity::ReciveDamage(float value, GameObject* sender)
 
 bool Collider::IsIgnore(GameObject* lhs, GameObject* rhs)
 {
-	auto table = GetIgnoreCollideList();
-	for (auto& t1 : lhs->tag.tags) {
-		for (auto& t2 : rhs->tag.tags) {
-			if (find(table.begin(), table.end(), pair<string, string>(t1, t2)) != table.end())
-				return true;
-		}
+	static auto& table = GetIgnoreCollideList();
+	for (auto flag : table) {
+		int collide_flag = lhs->tag.flag | rhs->tag.flag;
+		if ((collide_flag ^ flag) == flag)
+			return true;
 	}
 	return false;
 }
 
-vector<pair<string, string>>& Collider::GetIgnoreCollideList() {
-	static vector<pair<string, string>> instance; 
+vector<int>& Collider::GetIgnoreCollideList() {
+	static vector<int> instance; 
 	return instance;
 }
 
@@ -59,6 +57,7 @@ unordered_set<GameObject*> Collider::FindObject(const Circle& range, function<bo
 	unordered_set<GameObject*> ret;
 	Collider tempCollider;
 	tempCollider.AddCircle(range);
+	tempCollider.Update();
 	for (auto obj : GameObject::GetInstances()) {
 		if (!filter(obj))
 			continue;
@@ -74,8 +73,8 @@ unordered_set<GameObject*> Collider::FindObject(const Circle& range)
 	return FindObject(range, filter);
 }
 
-void Collider::AddIgnore(const string lhs, const string rhs) {
-	GetIgnoreCollideList().push_back({ lhs, rhs }); if (lhs != rhs) GetIgnoreCollideList().push_back({ rhs, lhs });
+void Collider::AddIgnore(const int lhs, const int rhs) {
+	GetIgnoreCollideList().push_back(lhs | rhs);
 }
 
 void Collider::UpdateBoundingBox()
@@ -110,11 +109,12 @@ void Collider::AddRect(const Rect& rect)
 
 void Collider::AddCircle(const Circle& circle)
 {
-	const float step = (360.0 / 16.0) * DEG2RAD;
+	const int v_count = 8;
+	const float step = (360.0 / (float)v_count) * DEG2RAD;
 	Polygon2D poly;
-	poly.vertices.resize(16);
+	poly.vertices.resize(v_count);
 	float rad = 0.0;
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < v_count; i++) {
 		poly.vertices[i] = Vector2( sin(rad), cos(rad) );
 		poly.vertices[i].set_length(circle.radius);
 		poly.vertices[i] += circle.center;
@@ -132,9 +132,6 @@ void Collider::Render()
 
 CollideInfo Collider::CollideWith(Collider& other)
 {
-	auto self_world_polys    = this->GetWorldPositionHitboxes();
-	auto other_world_polys   = other.GetWorldPositionHitboxes();
-
 	auto hitCheck = [](Polygon2D& lhs, Polygon2D& rhs, CollideInfo* ret) {
 		for (auto p : lhs.vertices) {
 			if (Graph2D::is_collide(p, rhs)) {
@@ -155,8 +152,11 @@ CollideInfo Collider::CollideWith(Collider& other)
 
 	CollideInfo ret;
 	ret.is_collide = false;
-	for (auto& p1 : self_world_polys) {
-		for (auto& p2 : other_world_polys) {
+	if (!Graph2D::is_collide(this->boundingBox, other.boundingBox))
+		return ret;
+
+	for (auto& p1 : this->hitboxes_world) {
+		for (auto& p2 : other.hitboxes_world) {
 			if (hitCheck(p1, p2, &ret))
 				break;
 			if (hitCheck(p2, p1, &ret))
@@ -165,39 +165,32 @@ CollideInfo Collider::CollideWith(Collider& other)
 		if (ret.is_collide)
 			break;
 	}
-
-	// find hit line (surface)
-	if (ret.is_collide) {
-		float min_distance = numeric_limits<float>().max();
-		for (auto& self_poly  : self_world_polys) {
-		for (auto& self_point : self_poly.vertices) {
-		for (auto& other_poly : other_world_polys) {
-		for (auto& other_line : other_poly.get_lines()) {
-			float distance = Graph2D::get_distance(self_point, other_line);
-			if (distance < min_distance) {
-				min_distance = distance;
-				ret.hitLine  = other_line;
-				ret.hitPoint = self_point;
-			}
-		}}}};
-	}
 	return ret;
 }
 
-vector<Polygon2D> Collider::GetWorldPositionHitboxes()
-{
+void Collider::Update() {
+	if (hitboxes.empty())
+		return;
 	auto rotateMatrix = gameObject ? gameObject->get_rotateMatrix() : Matrix2x2::FromRotation(0);
 	Vector2 offset    = gameObject ? gameObject->position : Vector2(0, 0);
 
-	vector<Polygon2D> polys;
-	polys.reserve(hitboxes.size());
+	hitboxes_world.resize(hitboxes.size());
+	int p = 0;
 	for (auto& poly : hitboxes) {
-		Polygon2D worldPoly(poly);
+		auto& target = hitboxes_world[p]; p++;
+		target = Polygon2D(poly);
 		for (int i = 0, imax = poly.vertices.size(); i < imax; i++)
-			worldPoly.vertices[i] = (rotateMatrix * poly.vertices[i]) + offset;
-		polys.push_back(worldPoly);
+			target.vertices[i] = (rotateMatrix * target.vertices[i]) + offset;
 	}
-	return polys;
+
+	boundingBox = hitboxes_world[0].get_boundingBox();
+	for (int i = 1; i < hitboxes_world.size(); i++) {
+		auto poly_bbox = hitboxes_world[i].get_boundingBox();
+		boundingBox.set_xMin(min(boundingBox.get_xMin(), poly_bbox.get_xMin()));
+		boundingBox.set_yMin(min(boundingBox.get_yMin(), poly_bbox.get_yMin()));
+		boundingBox.set_xMax(max(boundingBox.get_xMax(), poly_bbox.get_xMax()));
+		boundingBox.set_yMax(max(boundingBox.get_yMax(), poly_bbox.get_yMax()));
+	}
 }
 
 void Rigidbody::Update()

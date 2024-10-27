@@ -84,7 +84,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -138,6 +138,7 @@
     <ClInclude Include="callib.h" />
     <ClInclude Include="callib_config.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="include\UI.h" />
     <ClInclude Include="Window.h">
       <FileType>CppForm</FileType>
     </ClInclude>

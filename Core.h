@@ -28,12 +28,6 @@ using System::Drawing::Graphics;
 #define DEG2RAD 0.01745329251
 #define RAD2DEG 57.2957795457
 
-const string Tag_Entity  = "Entity";
-const string Tag_Player  = "Player";
-const string Tag_Exp     = "Exp";
-const string Tag_Monster = "Monster";
-const string Tag_Bullet  = "Bullet";
-
 const int Layer_Player  =  0;
 const int Layer_Exp     =  1;
 const int Layer_Monster = -1;
@@ -108,11 +102,84 @@ public:
 
 class Tag {
 public:
-    unordered_set<string> tags;
-    inline void Add(string value) { tags.insert(value); }
-    inline void Remove(string value) { tags.erase(value); }
-    inline bool Contains(string value) { return tags.count(value); };
+    static const int None    = 0;
+    static const int Player  = 1;
+    static const int Monster = 2;
+    static const int Bullet  = 4;
+    static const int Exp     = 8;
+
+    int flag = 0;
+    inline void Add(const int value) { flag |= value; }
+    inline void Remove(const int value) { flag ^= ~value; }
+    inline bool Contains(const int value) { return (flag & value) == value; };
 };
+
+class GameObject;
+
+class  GameObject;
+struct CollideInfo {
+    bool    is_collide;
+};
+class Collider {
+public:
+    static vector<int>& GetIgnoreCollideList();
+    static unordered_set<GameObject*> FindObject(const Circle& range, function<bool(GameObject*)> filter);
+    static unordered_set<GameObject*> FindObject(const Circle& range);
+    static void AddIgnore(const int lhs, const int rhs);
+    static bool IsIgnore(GameObject* lhs, GameObject* rhs);
+    GameObject* gameObject = nullptr;
+    Rect boundingBox;
+    vector<Polygon2D> hitboxes;
+    vector<Polygon2D> hitboxes_world;
+    void UpdateBoundingBox();
+    void AddRect(const Rect& rect);
+    void AddCircle(const Circle& circle);
+    void Render();
+    CollideInfo CollideWith(Collider& other);
+    void Update();
+};
+class Rigidbody {
+public:
+    GameObject* gameObject = nullptr;
+    float       decelerate = 0.9f;
+    float       maxSpeed = 5.0f;
+    Vector2     movement = { 0,0 };
+    bool        relate_rotation = false;
+    bool        enable = true;
+    void Update();
+    void AddForce(Vector2 force);
+    void AddForce(Vector2 direction, float force);
+    void AddForce(float rotation, float force);
+};
+
+class GameObject {
+private:
+    using InstancesTable = unordered_map<string, unordered_set<GameObject*>>;
+    static       unordered_set<GameObject*>& m_GetInstances();
+    //static       InstancesTable& m_GetInstancesTable();
+protected:
+    bool mark_destory = false;
+    GameObject();
+public:
+    ~GameObject();
+    static const unordered_set<GameObject*>& GetInstances();
+    //static const InstancesTable& GetInstancesTable();
+    inline virtual void Update() {};
+    inline virtual void Render() {};
+    inline virtual void OnCollide(GameObject* other, CollideInfo collideInfo) {};
+    Tag tag;
+    int render_layer = 0;
+    inline bool is_Destory() { return mark_destory; }
+    void Destory();
+
+    Vector2 position = { 0,0 };
+    float   rotation = 0;
+    Matrix2x2 get_rotateMatrix();
+
+    Collider collider;
+    Rigidbody rigidbody;
+};
+
 
 class Input {
 public:
@@ -135,71 +202,6 @@ public:
     static Vector2	ScreenSize;
     static Vector2	MousePosition;
     static float MouseScroller;
-};
-
-class GameObject;
-struct CollideInfo {
-    bool    is_collide;
-    Line2D  hitLine;
-    Vector2 hitPoint;
-};
-class Collider {
-public:
-    static vector<pair<string, string>>& GetIgnoreCollideList();
-    static unordered_set<GameObject*> FindObject(const Circle& range, function<bool(GameObject*)> filter);
-    static unordered_set<GameObject*> FindObject(const Circle& range);
-    static void AddIgnore(const string lhs, const string rhs);
-    static bool IsIgnore(GameObject* lhs, GameObject* rhs);
-    GameObject* gameObject = nullptr;
-    Rect boundingBox;
-    vector<Polygon2D> hitboxes;
-    void UpdateBoundingBox();
-    void AddRect  (const Rect& rect);
-    void AddCircle(const Circle& circle);
-    void Render();
-    CollideInfo CollideWith(Collider& other);
-    vector<Polygon2D> GetWorldPositionHitboxes();
-};
-class Rigidbody {
-public:
-    GameObject* gameObject      = nullptr;
-    float       decelerate      = 0.9f;
-    float       maxSpeed        = 5.0f;
-    Vector2     movement        = { 0,0 };
-    bool        relate_rotation = false;
-    bool        enable          = true;
-    void Update();
-    void AddForce(Vector2 force);
-    void AddForce(Vector2 direction, float force);
-    void AddForce(float rotation, float force);
-};
-
-class GameObject {
-private:
-    using InstancesTable = unordered_map<string, unordered_set<GameObject*>>;
-    static       unordered_set<GameObject*>& m_GetInstances();
-    //static       InstancesTable& m_GetInstancesTable();
-protected:
-    bool mark_destory = false;
-    GameObject();
-public:
-    ~GameObject();
-    static const unordered_set<GameObject*>& GetInstances();
-    //static const InstancesTable& GetInstancesTable();
-    inline virtual void Update() {};
-    inline virtual void Render() {};
-    inline virtual void OnCollide(GameObject* other,CollideInfo collideInfo) {};
-    Tag tag;
-    int render_layer = 0;
-    inline bool is_Destory() { return mark_destory; }
-    void Destory();
-
-    Vector2 position = { 0,0 };
-    float   rotation = 0;
-    Matrix2x2 get_rotateMatrix();
-
-    Collider collider;
-    Rigidbody rigidbody;
 };
 
 class Camera : public GameObject{

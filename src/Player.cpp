@@ -6,7 +6,7 @@ Player::Player()
 {
 	instance = this;
 	render_layer = Layer_Player;
-	tag.Add(Tag_Player);
+	tag.Add(Tag::Player);
 	position = { 200,200 };
 	rotation = 45;
 	auto scale = 35.0f;
@@ -45,7 +45,7 @@ void Player::Update()
 	}
 
 	// attract exp
-	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag_Exp); })) {
+	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {
 		auto attractForce = position - exp->position;
 		attractForce.set_length(speed / 1.5f);
 		exp->rigidbody.AddForce(attractForce);
@@ -71,14 +71,14 @@ Exp::Exp(float value)
 	:value(value)
 {
 	render_layer = Layer_Exp;
-	tag.Add(Tag_Exp);
+	tag.Add(Tag::Exp);
 	rigidbody.decelerate = 0.95;
 	collider.AddCircle({ {0,0},value * 3.0f });
 }
 
 void Exp::OnCollide(GameObject* other, CollideInfo collideInfo)
 {
-	if (other->tag.Contains(Tag_Player)) {
+	if (other->tag.Contains(Tag::Player)) {
 		auto player = (Player*)other;
 		player->ReciveExp(value);
 		Destory();
