@@ -9,15 +9,123 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="include\misc">
+      <UniqueIdentifier>{a6015e04-0c66-4898-ac2e-47b7a245246c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\GameObjcet">
+      <UniqueIdentifier>{1b980a94-a536-4daa-90c6-c1e26d41f346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\misc">
+      <UniqueIdentifier>{1e7737a3-0f8c-4da0-857f-a149d6153e49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameObject">
+      <UniqueIdentifier>{3ca7dcdd-50e8-48e1-bc5d-ac93d0cff2ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Window.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\callib.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\Global.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\MouseHandler.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\KeyBoardHandler.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\Rand.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\Core.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\GameObject.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\Drawer.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Camera.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Entity.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Player.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Exp.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Monster.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Bullet.cpp">
+      <Filter>src\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Window.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\callib.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\callib_config.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\Core.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\Global.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pch.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\MouseHandler.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\App.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\KeyBoardHandler.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\Rand.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\GameObject.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\Drawer.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Camera.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Player.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Entity.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Exp.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Monster.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\Bullet.h">
+      <Filter>include\GameObjcet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

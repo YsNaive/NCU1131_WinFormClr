@@ -74,12 +74,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>./include;$(IncludePath)</IncludePath>
+    <IncludePath>./include;./include/misc;./include/GameObject;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -128,9 +130,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\GameObject\Bullet.cpp" />
+    <ClCompile Include="src\GameObject\Camera.cpp" />
+    <ClCompile Include="src\GameObject\Entity.cpp" />
+    <ClCompile Include="src\GameObject\Exp.cpp" />
+    <ClCompile Include="src\GameObject\GameObject.cpp" />
+    <ClCompile Include="src\GameObject\Monster.cpp" />
+    <ClCompile Include="src\GameObject\Player.cpp" />
+    <ClCompile Include="src\misc\callib.cpp" />
+    <ClCompile Include="src\misc\Core.cpp" />
+    <ClCompile Include="src\misc\Drawer.cpp" />
+    <ClCompile Include="src\misc\Global.cpp" />
+    <ClCompile Include="src\misc\KeyBoardHandler.cpp" />
+    <ClCompile Include="src\misc\MouseHandler.cpp" />
+    <ClCompile Include="src\misc\Rand.cpp" />
+    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\App.h" />
+    <ClInclude Include="include\GameObject\Bullet.h" />
+    <ClInclude Include="include\GameObject\Camera.h" />
+    <ClInclude Include="include\GameObject\Entity.h" />
+    <ClInclude Include="include\GameObject\Exp.h" />
+    <ClInclude Include="include\GameObject\GameObject.h" />
+    <ClInclude Include="include\GameObject\Monster.h" />
+    <ClInclude Include="include\GameObject\Player.h" />
+    <ClInclude Include="include\misc\callib.h" />
+    <ClInclude Include="include\misc\callib_config.h" />
+    <ClInclude Include="include\misc\Core.h" />
+    <ClInclude Include="include\misc\Drawer.h" />
+    <ClInclude Include="include\misc\Global.h" />
+    <ClInclude Include="include\misc\KeyBoardHandler.h" />
+    <ClInclude Include="include\misc\MouseHandler.h" />
+    <ClInclude Include="include\misc\Rand.h" />
+    <ClInclude Include="include\pch.h" />
     <ClInclude Include="include\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
