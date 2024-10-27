@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,25 +20,24 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{5B1BDD41-DF1D-4C0C-8863-DCA0FEAFA548}</ProjectGuid>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <ProjectGuid>{4f990c1c-f92e-41ce-9dbf-d90879e79327}</ProjectGuid>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
-    <RootNamespace>程式語言及應用</RootNamespace>
+    <RootNamespace>CLR_TankGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>project</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -52,7 +51,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -75,16 +74,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PublicIncludeDirectories>
-    </PublicIncludeDirectories>
+    <IncludePath>./include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;./include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -94,8 +89,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -107,8 +100,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -120,8 +111,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -132,43 +121,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ResourceCompile Include="app.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="callib.h" />
-    <ClInclude Include="callib_config.h" />
-    <ClInclude Include="Core.h" />
-    <ClInclude Include="include\UI.h" />
-    <ClInclude Include="Window.h">
-      <FileType>CppForm</FileType>
-    </ClInclude>
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Resource.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="callib.cpp" />
-    <ClCompile Include="Core.cpp" />
-    <ClCompile Include="CppCLR_WinFormsProject.cpp" />
-    <ClCompile Include="src\Bullet.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Drawer.cpp" />
-    <ClCompile Include="src\GameObject.cpp" />
-    <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\Monster.cpp" />
-    <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="app.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -176,10 +128,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Window.resx">
-      <DependentUpon>Window.h</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <ClCompile Include="src\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
