@@ -1,7 +1,8 @@
-#include "pch.h"
+
 #include "Drawer.h"
 
 #include "Core.h"
+#include "Camera.h";
 
 void Drawer::AddPosition(Vector2 position)
 {
@@ -94,15 +95,18 @@ void Drawer::AddFillPoly(Color color, Polygon2D& poly)
 	delete path;
 }
 
-void Drawer::AddText(Color color, const string& text, Vector2 position, float textSize)
+void Drawer::AddText(Color color, const string& text, Vector2 position, Anchor anchor, float textSize)
 {
 	Graphics^ g = RefGlobal::CurrentGraphics;
 	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
 	auto font = gcnew Drawing::Font("Consolas", textSize);
-
+	
 	String^ clrStr = msclr::interop::marshal_as<String^>(text);
-	g->DrawString(clrStr, font, solidBrush, position.x, position.y);
+	auto size = g->MeasureString(clrStr, font);
+	Rect bound = { 0,0, size.Width, size.Height };
+	position -= anchor.GetPosition(bound);
 
+	g->DrawString(clrStr, font, solidBrush, position.x, position.y);
 	delete solidBrush;
 	delete font;
 	delete clrStr;

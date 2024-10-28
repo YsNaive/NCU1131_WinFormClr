@@ -1,7 +1,9 @@
-#include "pch.h"
+
 #include "Global.h"
 
 #include "Core.h"
+#include "Camera.h"
+#include "Player.h"
 #include "MouseHandler.h"
 #include "KeyBoardHandler.h"
 
@@ -42,7 +44,7 @@ namespace {
 		last_update_time = current;
 		Global::DeltaTime = update_duration.count() * Global::TimeScale;
 		Global::Time += Global::DeltaTime;
-		ups_buffer[Global::UpdateCount % 10] = 1.0f / Global::DeltaTime;
+		ups_buffer[Global::UpdateCount % 10] = (1.0f / Global::DeltaTime) / Global::TimeScale;
 		float ups_sum = 0;
 		for (float ups : ups_buffer)
 			ups_sum += ups;

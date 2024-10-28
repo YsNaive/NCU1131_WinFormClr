@@ -70,7 +70,7 @@ class Start      : public GlobalEvent<Start     , void> {};
 class PreUpdate  : public GlobalEvent<PreUpdate , void> {};
 class Update     : public GlobalEvent<Update    , void> {};
 class LateUpdate : public GlobalEvent<LateUpdate, void> {};
-class Render     : public GlobalEvent<Render   , void> {};
+class Render     : public GlobalEvent<Render    , void> {};
 
 class Matrix2x2 {
 public:
@@ -102,10 +102,12 @@ public:
 class Tag {
 public:
     static const int None    = 0;
-    static const int Player  = 1;
-    static const int Monster = 2;
-    static const int Bullet  = 4;
-    static const int Exp     = 8;
+    static const int Entity  = 1;
+    static const int Player  = 2;
+    static const int Monster = 4;
+    static const int Bullet  = 8;
+    static const int Exp     = 16;
+    static const int UI      = 32;
 
     int flag = 0;
     inline void Add(const int value) { flag |= value; }
@@ -116,7 +118,31 @@ public:
 
 class Layer {
 public:
+    static const int UI      =  99;
     static const int Player  =  0;
     static const int Exp     =  1;
     static const int Monster = -1;
+};
+
+class Anchor {
+private:
+    inline Anchor(int value)
+        : value(value) {}
+    int value;
+
+public:
+    static const Anchor UpperLeft   ;
+    static const Anchor UpperCenter ;
+    static const Anchor UpperRight  ;
+    static const Anchor MiddleLeft  ;
+    static const Anchor MiddleCenter;
+    static const Anchor MiddleRight ;
+    static const Anchor LowerLeft   ;
+    static const Anchor LowerCenter ;
+    static const Anchor LowerRight  ;
+
+    Vector2 GetPosition(const Rect& rect);
+
+    inline bool operator== (Anchor other) { return value == other.value; }
+    inline bool operator!= (Anchor other) { return value != other.value; }
 };

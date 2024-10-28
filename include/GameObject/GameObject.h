@@ -56,6 +56,7 @@ public:
     inline virtual void OnCollide(GameObject* other, CollideInfo collideInfo) {};
     Tag tag;
     int render_layer = 0;
+    bool enable = true;
     inline bool is_Destroy() { return mark_destory; }
     void Destroy();
 

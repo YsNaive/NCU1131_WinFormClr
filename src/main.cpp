@@ -1,12 +1,5 @@
-#include "pch.h"
-#include "App.h"
 
-auto test_setup = Start::Create([]() {
-	for (int i = 0; i < 600; i++) {
-		auto obj = new NormalMonster(10 + (rand() % 5));
-		obj->position = { (i % 20) * 15.0f,((int)(i/20.0f)) * 15.0f };
-	}
-	});
+#include "App.h"
 
 void AppLoop(Object^ sender, EventArgs^ e);
 [STAThread]
@@ -59,17 +52,24 @@ auto object_update = Update::Create([]() {
 	auto objCount = objList.size();
 	if (Global::GetKeyDown(Keys::F3))
 		DebugMode = !DebugMode;
+	if (Global::GetKeyDown(Keys::Escape))
+		Global::TimeScale = 1 - Global::TimeScale;
 	// do update
 	for (auto* obj : objList) {
+		if (!obj->enable)
+			continue;
 		obj->rigidbody.Update();
 		obj->collider.Update();
 		obj->Update();
 	};
+
 	// do collide test
 	for (int i = 0; i < objCount; i++) {
 		for (int j = i + 1; j < objCount; j++) {
 			auto lhs = objList[i];
 			auto rhs = objList[j];
+			if (lhs->collider.hitboxes.empty() || rhs->collider.hitboxes.empty())
+				continue;
 			if (Collider::IsIgnore(lhs, rhs))
 				continue;
 			auto collideInfo = (lhs->rigidbody.movement.get_length() > rhs->rigidbody.movement.get_length())
@@ -96,7 +96,10 @@ auto render_update = Render::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer < rhs->render_layer; });
 	for (auto* obj : sorted_obj) {
-		Drawer::SetRenderTarget(obj, Global::MainCamera);
+		if (obj->tag.Contains(Tag::UI))
+			RefGlobal::CurrentGraphics->ResetTransform();
+		else
+			Drawer::SetRenderTarget(obj, Global::MainCamera);
 		obj->Render();
 	}
 	if (DebugMode) {
@@ -106,7 +109,7 @@ auto render_update = Render::Create([]() {
 		}
 		RefGlobal::CurrentGraphics->ResetTransform();
 		Color textColor = { .2,.2,.2 };
-		Drawer::AddText(textColor, to_string(Global::UpdatePerSecond) + " u/sec", {0,0});
+		Drawer::AddText(textColor, to_string(Global::UpdatePerSecond) + " u/sec", { 0,0 });
 		Drawer::AddText(textColor, Global::Player->position.to_string(), {0,15});
 	}
 	});

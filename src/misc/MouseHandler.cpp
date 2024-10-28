@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "MouseHandler.h"
 
 #include "Global.h"

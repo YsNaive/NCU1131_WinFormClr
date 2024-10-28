@@ -1,29 +1,36 @@
-#include "pch.h"
+
 #include "Monster.h"
 
 #include "Drawer.h"
 #include "Rand.h"
 #include "Exp.h"
+#include "Player.h"
 
 Monster::Monster()
 {
 	render_layer = Layer::Monster;
 	tag.Add(Tag::Monster);
-	speed = 12;
+
+	entityInfo_origin.Spd   = 12;
+	entityInfo_origin.MaxHp = 100;
+	Hp = 100;
 }
 
 void Monster::Update()
 {
-	rigidbody.AddForce(Global::Player->position - position, speed * Global::DeltaTime);
+	Entity::Update();
+	rigidbody.AddForce(Global::Player->position - position, entityInfo.Spd * Global::DeltaTime);
 }
 
 void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 {
 	if (other->tag.Any(Tag::Monster | Tag::Player)) {
 		auto offset = position - other->position;
-		auto offset_spd = speed * Global::DeltaTime * 3.0f;
-		if (other->tag.Contains(Tag::Player))
-			offset_spd *= 2.5f;
+		auto offset_spd = entityInfo.Spd * Global::DeltaTime;
+		if (other->tag.Contains(Tag::Player)) {
+			auto entity = (Entity*)other;
+			offset_spd *= 160.0f;
+		}
 		offset.set_length(offset_spd);
 		rigidbody.movement += offset;
 	}

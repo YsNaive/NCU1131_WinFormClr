@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "Player.h"
 
 #include "Global.h"
@@ -13,23 +13,41 @@ Player::Player()
 	rotation = 45;
 	auto scale = 35.0f;
 	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
-	speed = 15;
+
+	entityInfo_origin.Spd    = 15;
+	entityInfo_origin.MaxHp  = 100;
+	entityInfo_origin.DivDeg = 3;
+	entityInfo_origin.Atk    = 20;
+	Hp = 100;
+
+	bulletGenerator = new BulletGenerator<Bullet>(this);
+	bulletGenerator->BulletWave.push_back(0);
+	bulletGenerator->BulletWave.push_back(180);
+	bulletGenerator->OffsetRadius = 45;
+	bulletGenerator->WavePerShoot = 5;
 }
 
 void Player::ReciveExp(int value)
 {
-	cout << "GET Exp " << value << '\n';
+	CurrentExp += value;
+	if (CurrentExp >= LevelUpExp) {
+		Level++;
+		CurrentExp -= LevelUpExp;
+		LevelUpExp += 10;
+	}
 }
 
 void Player::Update()
 {
+	Entity::Update();
+
 	// movement
 	float force = 0;
 	if (Global::GetKey(Keys::W)) {
-		force += speed;
+		force += entityInfo.Spd;
 	}
 	if (Global::GetKey(Keys::S)) {
-		force -= speed;
+		force -= entityInfo.Spd;
 	}
 	if (Global::GetKey(Keys::A)) {
 		rotation -= 150 * Global::DeltaTime;
@@ -39,17 +57,10 @@ void Player::Update()
 	}
 	rigidbody.AddForce(rotation, force * Global::DeltaTime);
 
-	if (Global::GetKey(MouseButtons::Left)) {
-		auto bullet = new Bullet(rotation, 20);
-		auto offset = Vector2::FromDegree(rotation);
-		offset.set_length(25);
-		bullet->position = this->position + offset;
-	}
-
 	// attract exp
 	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {
 		auto attractForce = position - exp->position;
-		attractForce.set_length(speed * Global::DeltaTime * 2.0f);
+		attractForce.set_length(entityInfo.Spd * Global::DeltaTime * 2.0f);
 		exp->rigidbody.AddForce(attractForce);
 	}
 }

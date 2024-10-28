@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "GameObject.h"
 
 #include "Drawer.h"
@@ -162,6 +162,8 @@ void Collider::Update() {
 
 void Rigidbody::Update()
 {
+	if (Global::TimeScale == 0)
+		return;
 	if (!enable)
 		return;
 	if (!gameObject)
@@ -171,7 +173,7 @@ void Rigidbody::Update()
 		offset = gameObject->get_rotateMatrix() * offset;
 
 	gameObject->position += offset;
-	movement *= decelerate;
+	movement *= decelerate ;
 }
 
 void Rigidbody::AddForce(Vector2 force)

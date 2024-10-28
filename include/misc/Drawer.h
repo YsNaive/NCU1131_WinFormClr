@@ -20,5 +20,5 @@ public:
     static void AddFillRect(Color color, Rect rect);
     static void AddPoly    (Color color, Polygon2D& poly, float thickness = 1);
     static void AddFillPoly(Color color, Polygon2D& poly);
-    static void AddText(Color color,const string& text, Vector2 position, float textSize = 14);
+    static void AddText(Color color,const string& text, Vector2 position, Anchor anchor = Anchor::UpperLeft, float textSize = 14);
 };

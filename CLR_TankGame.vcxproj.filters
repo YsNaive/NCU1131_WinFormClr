@@ -32,9 +32,6 @@
     <ClCompile Include="src\misc\Global.cpp">
       <Filter>src\misc</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\misc\MouseHandler.cpp">
       <Filter>src\misc</Filter>
     </ClCompile>
@@ -71,6 +68,21 @@
     <ClCompile Include="src\GameObject\Bullet.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="src\test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\EffectArea.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\UI.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameUI.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\DamageInfo.cpp">
+      <Filter>src\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Window.h">
@@ -87,9 +99,6 @@
     </ClInclude>
     <ClInclude Include="include\misc\Global.h">
       <Filter>include\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="include\pch.h">
-      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\misc\MouseHandler.h">
       <Filter>include\misc</Filter>
@@ -126,6 +135,18 @@
     </ClInclude>
     <ClInclude Include="include\GameObject\Bullet.h">
       <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\EffectArea.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\UI.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\BulletGenerator.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\DamageInfo.h">
+      <Filter>include\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

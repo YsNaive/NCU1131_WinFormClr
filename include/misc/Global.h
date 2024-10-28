@@ -2,8 +2,6 @@
 
 #include "Core.h"
 #include "Window.h"
-#include "Camera.h"
-#include "Player.h"
 
 ref class RefGlobal {
 public:
@@ -12,6 +10,8 @@ public:
     static Graphics^ CurrentGraphics;
 };
 
+extern class Player;
+extern class Camera;
 class Global {
 public:
 
