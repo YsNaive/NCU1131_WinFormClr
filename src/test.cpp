@@ -1,5 +1,7 @@
-
 #include "App.h"
+#include "GameManager.h"
+#include "UI.h"
+
 namespace {
 	NormalMonster* monster;
 }
@@ -16,12 +18,6 @@ Start::Create([]() {
 	area->modifiers.push_back({ &FrostModifier, 0.1 });
 	area->collider.AddRect({ -100,-100,200,200 });
 
-	for (int i = 0; i < 50; i++) {
-		monster = new NormalMonster(Rand::RandomInt(10,20));
-		monster->position.x += i * 1;
-		monster->position.y += i * 1.01f;
-		monster->entityInfo.MaxHp = 20;
-		}
 	});
 
 auto test_update = 
@@ -30,4 +26,23 @@ Update::Create([]() {
 		Global::Player->Hp = 10;
 	if (Global::GetKeyDown(Keys::Q))
 		Global::Player->Hp = 100;
+	if (Global::GetKeyDown(Keys::F5))
+		GameManager::Reset(), GameManager::Resume();
+
+	int count = 0;
+	for (auto obj : GameObject::GetInstances())
+		if (obj->tag.Contains(Tag::Monster))
+			count++;
+	while (count++ < 20)
+	{
+		auto monster = new NormalMonster(Rand::Float(10, 20));
+		monster->position  = { Rand::Float(200,450), Rand::Float(200,450) };
+		monster->position += Global::Player->position;
+	}
+	});
+
+auto test_render =
+Render::Create([]() {
+	RefGlobal::CurrentGraphics->ResetTransform();
+
 	});

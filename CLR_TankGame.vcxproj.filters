@@ -21,6 +21,12 @@
     <Filter Include="src\GameObject">
       <UniqueIdentifier>{3ca7dcdd-50e8-48e1-bc5d-ac93d0cff2ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\GameUtils">
+      <UniqueIdentifier>{94330db2-1db1-4377-8099-26953ea97645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GameUtils">
+      <UniqueIdentifier>{c72b824a-29fc-4bc5-ad2f-7f05141a777d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -82,6 +88,15 @@
     </ClCompile>
     <ClCompile Include="src\misc\DamageInfo.cpp">
       <Filter>src\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\BulletGenerator.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\GameManager.cpp">
+      <Filter>src\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp">
+      <Filter>src\GameUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +162,15 @@
     </ClInclude>
     <ClInclude Include="include\misc\DamageInfo.h">
       <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\Prefab.h">
+      <Filter>include\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject\GameManager.h">
+      <Filter>include\GameObjcet</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameUtils\PlayerUpgrade.h">
+      <Filter>include\GameUtils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

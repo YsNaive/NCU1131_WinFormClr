@@ -54,6 +54,9 @@ auto object_update = Update::Create([]() {
 		DebugMode = !DebugMode;
 	if (Global::GetKeyDown(Keys::Escape))
 		Global::TimeScale = 1 - Global::TimeScale;
+	Collider mouseCollider = Collider();
+	mouseCollider.AddCircle({ Global::MousePosition, 1 });
+	mouseCollider.Update();
 	// do update
 	for (auto* obj : objList) {
 		if (!obj->enable)
@@ -61,6 +64,15 @@ auto object_update = Update::Create([]() {
 		obj->rigidbody.Update();
 		obj->collider.Update();
 		obj->Update();
+
+		if (obj->tag.Contains(Tag::Clickable)) {
+			auto clickable = (UI_Clickable*)obj;
+			clickable->IsHovering = mouseCollider.CollideWith(obj->collider).is_collide;
+			if (clickable->IsHovering && Global::GetKeyDown(MouseButtons::Left)) {
+				for (auto func : clickable->OnClick)
+					func();
+			}
+		}
 	};
 
 	// do collide test
@@ -96,10 +108,7 @@ auto render_update = Render::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer < rhs->render_layer; });
 	for (auto* obj : sorted_obj) {
-		if (obj->tag.Contains(Tag::UI))
-			RefGlobal::CurrentGraphics->ResetTransform();
-		else
-			Drawer::SetRenderTarget(obj, Global::MainCamera);
+		Drawer::SetRenderTarget(obj, Global::MainCamera);
 		obj->Render();
 	}
 	if (DebugMode) {

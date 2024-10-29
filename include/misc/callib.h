@@ -816,7 +816,7 @@ namespace callib {
 
 		bool is_clockWise() { return Polygon::is_clockWise(vertices); }
 
-		void		 get_lines(vector<Line>& dst) {
+		void		 get_lines(vector<Line>& dst){
 			int imax = vertices.size();
 			Vector2 from = vertices[imax - 1];
 			for (int i = 0; i < imax; i++) {

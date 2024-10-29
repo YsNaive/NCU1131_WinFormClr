@@ -139,8 +139,10 @@ namespace callib {
 	Color Color::FromHSV(float h, float s, float v, float a)
 	{
 		h = std::fmod(h, 360.0f);
+		if (h < 0) h += 360.0f;  // 保證 h 在 0-360 的範圍內
+
 		float c = v * s; // 色度
-		float x = c * (1.0f - (float)std::abs(std::fmod(h / 60.0f, 2) - 1.0f)); // 中間值
+		float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2) - 1.0f)); // 中間值
 		float m = v - c; // 亮度的偏移量
 
 		float r, g, b;
@@ -175,6 +177,12 @@ namespace callib {
 			g = 0;
 			b = x;
 		}
+
+		// 調整最小值並確保 RGB 值在 0-1 的範圍
+		r = (r + m);
+		g = (g + m);
+		b = (b + m);
+
 		return Color(r, g, b, a);
 	}
 

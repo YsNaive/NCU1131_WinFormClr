@@ -2,6 +2,7 @@
 
 #include "Drawer.h"
 #include "Global.h"
+#include "PlayerUpgrade.h"
 
 namespace {
     static constexpr float AnimationRate = 10.0f;
@@ -40,4 +41,39 @@ void UI_ProgressBar::Render()
 
     Drawer::AddFillRect(EmptyColor, Bound);
     Drawer::AddFillRect(FillColor , fillRect);
+}
+
+void UI_Card::Render()
+{
+    auto waveFunc = [](float x) { return ((sin(x * 180 * DEG2RAD) + 1) / 2.0);  };
+    float c1sv = waveFunc(Global::Time      ) * 0.5f + 0.25f;
+    float c2sv = waveFunc(Global::Time + 0.5) * 0.5f + 0.25f;
+    Color color1 = Color::FromHSV(hue, c1sv, c1sv);
+    Color color2 = Color::FromHSV(hue, c2sv, c2sv);
+
+    Rect bound = { {0,0}, size };
+    Drawer::SetBrush(color1, color2, { 0,0 }, { 0,size.y });
+    Drawer::AddFillRect(bound);
+    Vector2 vec2pad = { padding, padding };
+    bound = { vec2pad, size - vec2pad * 2.0f };
+
+    Color bgColor   = Color::FromHSV(hue, .45, .15);
+    Color textColor = Color::FromHSV(hue, 0.25, 0.9);
+    Drawer::AddFillRect(bgColor, bound);
+    if (IsHovering)
+        Drawer::AddRect(textColor, { vec2pad * 0.5f, size - vec2pad }, 2.0f);
+
+    Rect rect_text = bound;
+    rect_text.height *= labelHeightPercent;
+
+    Drawer::AddText(textColor, label, rect_text.get_center(), 16, Anchor::MiddleCenter);
+    Drawer::AddText(textColor, description, { bound.x, rect_text.get_yMax() }, 12);
+}
+
+void UI_Card::AssignPlayerUpgrade(const PlayerUpgrade& info)
+{
+    label       = info.Name;
+    description = info.Description;
+    OnClick.push_back(info.Invoke);
+    hue = Rarity::GetColorHue(info.Rarity);
 }

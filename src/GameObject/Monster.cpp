@@ -12,8 +12,8 @@ Monster::Monster()
 	tag.Add(Tag::Monster);
 
 	entityInfo_origin.Spd   = 12;
-	entityInfo_origin.MaxHp = 100;
-	Hp = 100;
+	entityInfo_origin.MaxHp = 25;
+	Hp = 25;
 }
 
 void Monster::Update()
@@ -38,10 +38,10 @@ void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 
 void Monster::OnDead()
 {
-	for (int i = 0, imax = Rand::RandomInt(1, 3); i < imax; i++) {
+	for (int i = 0, imax = Rand::Int(1, 3); i < imax; i++) {
 		auto obj = new Exp(1);
 		obj->position = position;
-		obj->rigidbody.AddForce(Rand::RandomFloat(0, 360), Rand::RandomFloat(0.25, 1.5));
+		obj->rigidbody.AddForce(Rand::Float(0, 360), Rand::Float(0.25, 1.5));
 	}
 	Destroy();
 }

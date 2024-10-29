@@ -13,5 +13,5 @@ public:
     float Damage_M = 0;
     float Damage_E = 0;
 
-    void Hit(Entity* target);
+    void Hit(Entity* target) const;
 };

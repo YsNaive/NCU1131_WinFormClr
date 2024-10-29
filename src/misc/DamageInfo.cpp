@@ -10,7 +10,7 @@ DamageInfo DamageInfo::FromEntity(Entity* entity)
     return ret;
 }
 
-void DamageInfo::Hit(Entity* target)
+void DamageInfo::Hit(Entity* target) const
 {
     if (target->Hp == numeric_limits<float>().min())
         return;

@@ -1,7 +1,11 @@
 #pragma once
+#include "Core.h"
+#include "PlayerUpgrade.h"
 
 class Rand {
 public:
-    static float RandomFloat(float min, float max);
-    static float RandomInt(int include_min, int exclude_max);
+    static float Float(float min, float max);
+    static float Int(int min, int max);
+    static int   Rarity(float chance_lengend, float chance_epic, float chance_rare);
+    static const PlayerUpgrade& PlayerUpgrade();
 };

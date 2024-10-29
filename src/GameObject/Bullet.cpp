@@ -3,20 +3,16 @@
 #include "Drawer.h"
 #include "Entity.h"
 
-Bullet::Bullet(float speed, DamageInfo* damageInfo, float destoryDistance)
-	: speed(speed), damageInfo(damageInfo), destoryDistance(destoryDistance)
-{
-	tag.Add(Tag::Bullet);
-	collider.AddRect({ -3,-5,6,10 });
-}
+const BulletInfo BulletInfo::DefaultPlayer  = BulletInfo(500, 0, 1000, Tag::Player);
+const BulletInfo BulletInfo::DefaultMonster = BulletInfo(500, 0, 1000, Tag::Monster);
 
 void Bullet::Update()
 {
 	auto offset = Vector2::FromDegree(rotation);
-	offset.set_length(speed * Global::DeltaTime);
+	offset.set_length(bulletInfo->Speed * Global::DeltaTime);
 	position += offset;
-	movedDistance += speed * Global::DeltaTime;
-	if (movedDistance > destoryDistance)
+	movedDistance += bulletInfo->Speed * Global::DeltaTime;
+	if (movedDistance > bulletInfo->DestroyDistance)
 		this->Destroy();
 }
 
@@ -30,6 +26,8 @@ void Bullet::Render()
 
 void Bullet::OnCollide(GameObject* other, CollideInfo collideInfo)
 {
+	if (other->tag.Any(bulletInfo->IgnoreTag))
+		return;
 	if (find(hit_history.begin(), hit_history.end(), other) != hit_history.end())
 		return;
 	auto entity = dynamic_cast<Entity*>(other);
@@ -37,7 +35,7 @@ void Bullet::OnCollide(GameObject* other, CollideInfo collideInfo)
 		return;
 
 	damageInfo->Hit(entity);
-	penetrate--;
-	if (penetrate < 0)
+	hit_history.push_back(entity);
+	if (hit_history.size() > bulletInfo->Penetrate)
 		this->Destroy();
 }

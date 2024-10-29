@@ -4,6 +4,37 @@
 #include "Core.h"
 #include "Camera.h";
 
+namespace {
+	auto refDrawer_setup = Start::Create([]() {
+		RefDrawer::Font		  = gcnew Drawing::Font("·L³n¥¿¶ÂÅé", 14);
+		RefDrawer::Pen		  = gcnew Pen(Color(0,0,0).ToDrawingColor());
+		RefDrawer::SolidBrush = gcnew SolidBrush(Color(0, 0, 0).ToDrawingColor());
+		RefDrawer::PathBuffer = gcnew GraphicsPath();
+		});
+}
+
+void RefDrawer::SetPathBuffer(Polygon2D& poly)
+{
+	auto path = RefDrawer::PathBuffer;
+	path->Reset();
+	for (auto l : poly.get_lines()) {
+		path->AddLine(l.p1.x, l.p1.y, l.p2.x, l.p2.y);
+	}
+}
+
+void RefDrawer::SetStringBuffer(const string& str)
+{
+	if (RefDrawer::StringBuffer != nullptr)
+		delete RefDrawer::StringBuffer;
+	RefDrawer::StringBuffer = msclr::interop::marshal_as<String^>(str);
+}
+
+Vector2 RefDrawer::MeasureStringSize()
+{
+	auto size = RefGlobal::CurrentGraphics->MeasureString(RefDrawer::StringBuffer, RefDrawer::Font);
+	return { size.Width, size.Height };
+}
+
 void Drawer::AddPosition(Vector2 position)
 {
 	RefGlobal::CurrentGraphics->TranslateTransform(position.x, position.y);
@@ -22,94 +53,160 @@ void Drawer::AddScale(Vector2 scale)
 void Drawer::SetRenderTarget(GameObject* obj, Camera* camera)
 {
 	RefGlobal::CurrentGraphics->ResetTransform();
-	AddScale({ camera->scale, camera->scale });
-	AddPosition(-Global::MainCamera->position);
-	AddPosition((Global::ScreenSize / 2.0f) / camera->scale);
+	if (!obj->tag.Contains(Tag::UI)) {
+		AddScale({ camera->scale, camera->scale });
+		AddPosition(-Global::MainCamera->position);
+		AddPosition((Global::ScreenSize / 2.0f) / camera->scale);
+	}
 	AddPosition(obj->position);
 	AddRotation(obj->rotation);
 }
 
+void Drawer::SetPen(Color color, float thickness)
+{
+	RefDrawer::Pen->Color = color.ToDrawingColor();
+	RefDrawer::Pen->Width = thickness;
+}
+
+void Drawer::SetBrush(Color color)
+{
+	RefDrawer::SolidBrush->Color = color.ToDrawingColor();
+	RefDrawer::UsingBrush = RefDrawer::SolidBrush;
+}
+
+void Drawer::SetBrush(Color begColor, Color endColor, Vector2 begPos, Vector2 endPos)
+{
+	if (RefDrawer::GradientBrush != nullptr)
+		delete RefDrawer::GradientBrush;
+	RefDrawer::GradientBrush = gcnew LinearGradientBrush(
+		Drawing::Point(begPos.x, begPos.y),
+		Drawing::Point(endPos.x, endPos.y),
+		begColor.ToDrawingColor(),
+		endColor.ToDrawingColor());
+	RefDrawer::UsingBrush = RefDrawer::GradientBrush;
+}
+
+void Drawer::AddCircle(Circle circle)
+{
+	RefGlobal::CurrentGraphics->DrawEllipse(
+		RefDrawer::Pen,
+		circle.center.x - circle.radius,
+		circle.center.y - circle.radius,
+		circle.radius * 2,
+		circle.radius * 2);
+}
+
 void Drawer::AddCircle(Color color, Circle circle, float thickness)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
+	SetPen(color, thickness);
+	AddCircle(circle);
+}
 
-	Pen^ pen = gcnew Pen(color.ToDrawingColor(), thickness);
-	g->DrawEllipse(pen, circle.center.x - circle.radius, circle.center.y - circle.radius, circle.radius * 2, circle.radius * 2);
-	delete pen;
+void Drawer::AddFillCircle(Circle circle)
+{
+	RefGlobal::CurrentGraphics->FillEllipse(
+		RefDrawer::UsingBrush,
+		circle.center.x - circle.radius,
+		circle.center.y - circle.radius,
+		circle.radius * 2,
+		circle.radius * 2);
 }
 
 void Drawer::AddFillCircle(Color color, Circle circle)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
+	SetBrush(color);
+	AddFillCircle(circle);
+}
 
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-	g->FillEllipse(solidBrush, circle.center.x - circle.radius, circle.center.y - circle.radius, circle.radius * 2, circle.radius * 2);
-	delete solidBrush;
+void Drawer::AddRect(Rect rect)
+{
+	Vector2 center = rect.get_center();
+	RefGlobal::CurrentGraphics->DrawRectangle(
+		RefDrawer::Pen, 
+		rect.x		  , 
+		rect.y		  , 
+		rect.width	  , 
+		rect.height	 );
 }
 
 void Drawer::AddRect(Color color, Rect rect, float thickness)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
-	Vector2 center = rect.get_center();
-	Pen^ pen = gcnew Pen(color.ToDrawingColor(), thickness);
-	g->DrawRectangle(pen, rect.x, rect.y, rect.width, rect.height);
-	delete pen;
+	SetPen(color, thickness);
+	AddRect(rect);
+}
+
+void Drawer::AddFillRect(Rect rect)
+{
+	RefGlobal::CurrentGraphics->FillRectangle(
+		RefDrawer::UsingBrush,
+		rect.x,
+		rect.y,
+		rect.width,
+		rect.height);
 }
 
 void Drawer::AddFillRect(Color color, Rect rect)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
-	Vector2 center = rect.get_center();
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
+	SetBrush(color);
+	AddFillRect(rect);
+}
 
-	g->FillRectangle(solidBrush, rect.x, rect.y, rect.width, rect.height);
-	delete solidBrush;
+void Drawer::AddPoly(Polygon2D& poly)
+{
+	RefDrawer::SetPathBuffer(poly);
+	RefGlobal::CurrentGraphics->DrawPath(
+		RefDrawer::Pen,
+		RefDrawer::PathBuffer);
 }
 
 void Drawer::AddPoly(Color color, Polygon2D& poly, float thickness)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
+	SetPen(color, thickness);
+	AddPoly(poly);
+}
 
-	Pen^ pen = gcnew Pen(color.ToDrawingColor(), thickness);
-	auto path = gcnew Drawing::Drawing2D::GraphicsPath();
-	for (auto l : poly.get_lines()) {
-		path->AddLine(l.p1.x, l.p1.y, l.p2.x, l.p2.y);
-	}
-	g->DrawPath(pen, path);
-
-	delete pen;
-	delete path;
+void Drawer::AddFillPoly(Polygon2D& poly)
+{
+	RefDrawer::SetPathBuffer(poly);
+	RefGlobal::CurrentGraphics->FillPath(
+		RefDrawer::UsingBrush,
+		RefDrawer::PathBuffer);
 }
 
 void Drawer::AddFillPoly(Color color, Polygon2D& poly)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
-
-	Brush^ brush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-	auto path = gcnew Drawing::Drawing2D::GraphicsPath();
-	for (auto l : poly.get_lines()) {
-		path->AddLine(l.p1.x, l.p1.y, l.p2.x, l.p2.y);
-	}
-	g->FillPath(brush, path);
-	delete brush;
-	delete path;
+	SetBrush(color);
+	AddFillPoly(poly);
 }
 
-void Drawer::AddText(Color color, const string& text, Vector2 position, Anchor anchor, float textSize)
+void Drawer::AddText(const string& text, Vector2 position, Anchor anchor)
 {
-	Graphics^ g = RefGlobal::CurrentGraphics;
-	auto solidBrush = gcnew Drawing::SolidBrush(color.ToDrawingColor());
-	auto font = gcnew Drawing::Font("Consolas", textSize);
-	
-	String^ clrStr = msclr::interop::marshal_as<String^>(text);
-	auto size = g->MeasureString(clrStr, font);
-	Rect bound = { 0,0, size.Width, size.Height };
+	RefDrawer::SetStringBuffer(text);
+	Rect bound = { {0,0}, RefDrawer::MeasureStringSize() };
 	position -= anchor.GetPosition(bound);
+	RefGlobal::CurrentGraphics->DrawString(
+		RefDrawer::StringBuffer,
+		RefDrawer::Font,
+		RefDrawer::UsingBrush,
+		position.x,
+		position.y);
+}
 
-	g->DrawString(clrStr, font, solidBrush, position.x, position.y);
-	delete solidBrush;
-	delete font;
-	delete clrStr;
+void Drawer::AddText(Color color, const string& text, Vector2 position, Anchor anchor)
+{
+	SetBrush(color);
+	AddText(text, position, anchor);
+}
+
+void Drawer::AddText(Color color, const string& text, Vector2 position, float textSize, Anchor anchor)
+{
+	auto font_origin = RefDrawer::Font;
+	auto font_temp   = gcnew Drawing::Font(font_origin ->OriginalFontName, textSize);
+	RefDrawer::Font = font_temp;
+	SetBrush(color);
+	AddText(text, position, anchor);
+	RefDrawer::Font = font_origin;
+	delete font_temp;
 }
 
 void InputEvt::OnPaint(Object^ sender, PaintEventArgs^ e)

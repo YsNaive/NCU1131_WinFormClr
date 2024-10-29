@@ -44,3 +44,16 @@ Vector2 Anchor::GetPosition(const Rect& rect)
 		return { rect.get_xMax()    , rect.get_yMax() };
 	return { 0,0 };
 }
+
+float Rarity::GetColorHue(int rarity)
+{
+	if (rarity == Rarity::Common)
+		return 140.0f;
+	if (rarity == Rarity::Rare)
+		return 200.0f;
+	if (rarity == Rarity::Epic)
+		return 275.0f;
+	if (rarity == Rarity::Legend)
+		return  30.0f;
+	return 0;
+}

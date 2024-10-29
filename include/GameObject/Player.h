@@ -11,7 +11,8 @@ public:
     float LevelUpExp = 50;
     float attractExpRange = 70;
 
-    BulletGenerator<Bullet>* bulletGenerator = nullptr;
+    DamageInfo damageInfo;
+    BulletGenerator* bulletGenerator = nullptr;
 
 
     Player();

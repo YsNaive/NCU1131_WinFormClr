@@ -23,6 +23,8 @@ using System::Drawing::Graphics;
 using System::Drawing::Pen;
 using System::Drawing::Brush;
 using System::Drawing::SolidBrush;
+using System::Drawing::Drawing2D::LinearGradientBrush;
+using System::Drawing::Drawing2D::GraphicsPath;
 
 #define PI 3.14159265358979323846
 #define DEG2RAD 0.01745329251
@@ -71,6 +73,7 @@ class PreUpdate  : public GlobalEvent<PreUpdate , void> {};
 class Update     : public GlobalEvent<Update    , void> {};
 class LateUpdate : public GlobalEvent<LateUpdate, void> {};
 class Render     : public GlobalEvent<Render    , void> {};
+class GameReset  : public GlobalEvent<GameReset , void> {};
 
 class Matrix2x2 {
 public:
@@ -101,13 +104,14 @@ public:
 
 class Tag {
 public:
-    static const int None    = 0;
-    static const int Entity  = 1;
-    static const int Player  = 2;
-    static const int Monster = 4;
-    static const int Bullet  = 8;
-    static const int Exp     = 16;
-    static const int UI      = 32;
+    static const int None      = 0;
+    static const int Entity    = 1;
+    static const int Player    = 2;
+    static const int Monster   = 4;
+    static const int Bullet    = 8;
+    static const int Exp       = 16;
+    static const int UI        = 32;
+    static const int Clickable = 64;
 
     int flag = 0;
     inline void Add(const int value) { flag |= value; }
@@ -116,12 +120,23 @@ public:
     inline bool Any(const int value) { return (flag & value) != 0; };
 };
 
+class Rarity {
+public:
+    static constexpr int None   =  0;
+    static constexpr int Common =  1;
+    static constexpr int Rare   =  2;
+    static constexpr int Epic   =  3;
+    static constexpr int Legend =  4;
+
+    static float GetColorHue(int rarity);
+};
+
 class Layer {
 public:
-    static const int UI      =  99;
-    static const int Player  =  0;
-    static const int Exp     =  1;
-    static const int Monster = -1;
+    static constexpr int UI      =  99;
+    static constexpr int Player  =  0;
+    static constexpr int Exp     =  1;
+    static constexpr int Monster = -1;
 };
 
 class Anchor {
@@ -146,3 +161,4 @@ public:
     inline bool operator== (Anchor other) { return value == other.value; }
     inline bool operator!= (Anchor other) { return value != other.value; }
 };
+

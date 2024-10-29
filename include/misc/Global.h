@@ -2,6 +2,8 @@
 
 #include "Core.h"
 #include "Window.h"
+extern class Player;
+extern class Camera;
 
 ref class RefGlobal {
 public:
@@ -10,11 +12,8 @@ public:
     static Graphics^ CurrentGraphics;
 };
 
-extern class Player;
-extern class Camera;
 class Global {
 public:
-
     static bool GetKey    (Keys keyCode);
     static bool GetKeyDown(Keys keyCode);
     static bool GetKeyUp  (Keys keyCode);

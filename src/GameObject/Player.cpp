@@ -1,9 +1,42 @@
 
 #include "Player.h"
 
+#include "GameManager.h"
 #include "Global.h"
 #include "Drawer.h"
 #include "Bullet.h"
+
+namespace {
+	auto player_reset = GameReset::Create([]() {
+		auto player = Global::Player;
+		player->position = { 0,0 };
+		player->rotation = 0;
+
+		player->Level = 1;
+		player->LevelUpExp = 10;
+		player->CurrentExp = 0;
+
+		player->entityModifiers.clear();
+
+		player->entityInfo_origin.Spd = 15;
+		player->entityInfo_origin.MaxHp = 100;
+		player->entityInfo_origin.DivDeg = 5;
+		player->entityInfo_origin.Atk = 10;
+		player->entityInfo_origin.Atk_M = 0;
+		player->entityInfo_origin.AtkSpd = 1.25;
+		player->entityInfo_origin.Def = 0;
+		player->entityInfo_origin.Res_M = 0;
+		player->entityInfo_origin.Res_E = 0;
+		player->Hp = player->entityInfo_origin.MaxHp;
+		player->Entity::Update();
+
+		player->bulletGenerator->WavePerShoot = 1;
+		player->bulletGenerator->BulletWave = { 0 };
+
+		player->damageInfo = DamageInfo::FromEntity(player);
+
+		});
+}
 
 Player::Player()
 {
@@ -14,16 +47,14 @@ Player::Player()
 	auto scale = 35.0f;
 	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 
-	entityInfo_origin.Spd    = 15;
-	entityInfo_origin.MaxHp  = 100;
-	entityInfo_origin.DivDeg = 3;
-	entityInfo_origin.Atk    = 20;
-	Hp = 100;
 
-	bulletGenerator = new BulletGenerator<Bullet>(this);
+	bulletGenerator = new BulletGenerator(this, [&]() {
+		auto bullet = new Bullet(&BulletInfo::DefaultPlayer, &damageInfo);
+		bullet->collider.AddRect({ -3,-5,6,10 });
+		return bullet;
+		});
 	bulletGenerator->BulletWave.push_back(0);
 	bulletGenerator->BulletWave.push_back(180);
-	bulletGenerator->OffsetRadius = 45;
 	bulletGenerator->WavePerShoot = 5;
 }
 
@@ -34,13 +65,37 @@ void Player::ReciveExp(int value)
 		Level++;
 		CurrentExp -= LevelUpExp;
 		LevelUpExp += 10;
+
+		// do level up
+		GameManager::Pause();
+		entityInfo_origin.Atk   += 1;
+		entityInfo_origin.MaxHp += 10;
+		this->Entity::Update();
+		Hp = entityInfo.MaxHp;
+
+		Vector2 cardSize = { 180,300 };
+		Vector2 centerPos = Global::ScreenSize / 2.0 - cardSize / 2.0;
+		UI_Card* cards[] = {new UI_Card(cardSize) ,new UI_Card(cardSize) ,new UI_Card(cardSize)};
+		auto closeFunc = [cards]() {
+			cards[0]->Destroy();
+			cards[1]->Destroy();
+			cards[2]->Destroy();
+			GameManager::Resume();
+		};
+		for (auto* card : cards) {
+			card->position = centerPos;
+			card->OnClick.push_back(closeFunc);
+			card->AssignPlayerUpgrade(Rand::PlayerUpgrade());
+		}
+		cards[0]->position.x -= cardSize.x * 1.5f;
+		cards[2]->position.x += cardSize.x * 1.5f;
 	}
 }
 
 void Player::Update()
 {
 	Entity::Update();
-
+	damageInfo = DamageInfo::FromEntity(this);
 	// movement
 	float force = 0;
 	if (Global::GetKey(Keys::W)) {
