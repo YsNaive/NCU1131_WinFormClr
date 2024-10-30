@@ -9,9 +9,15 @@ namespace {
     static constexpr float BorderPadding = 2.5f;
 }
 
+void UI_Text::Render()
+{
+    Drawer::AddText(Color(.1,.1,.1), text, position, anchor);
+}
+
 void UI_ProgressBar::Update()
 {
-    currentValue += (Value - currentValue) * AnimationRate * Global::DeltaTime;
+    currentValue += (Value - currentValue) * AnimationRate * Global::RealDeltaTime;
+    currentValue = clamp(MinValue, MaxValue, currentValue);
 }
 
 void UI_ProgressBar::Render()
@@ -46,8 +52,8 @@ void UI_ProgressBar::Render()
 void UI_Card::Render()
 {
     auto waveFunc = [](float x) { return ((sin(x * 180 * DEG2RAD) + 1) / 2.0);  };
-    float c1sv = waveFunc(Global::Time      ) * 0.5f + 0.25f;
-    float c2sv = waveFunc(Global::Time + 0.5) * 0.5f + 0.25f;
+    float c1sv = waveFunc(Global::RealTime      ) * 0.5f + 0.25f;
+    float c2sv = waveFunc(Global::RealTime + 0.5) * 0.5f + 0.25f;
     Color color1 = Color::FromHSV(hue, c1sv, c1sv);
     Color color2 = Color::FromHSV(hue, c2sv, c2sv);
 
@@ -70,10 +76,11 @@ void UI_Card::Render()
     Drawer::AddText(textColor, description, { bound.x, rect_text.get_yMax() }, 12);
 }
 
-void UI_Card::AssignPlayerUpgrade(const PlayerUpgrade& info)
+void UI_Card::AssignPlayerUpgrade(PlayerUpgrade& info)
 {
     label       = info.Name;
     description = info.Description;
-    OnClick.push_back(info.Invoke);
+    OnClick.push_back([&]() {info.ApplyOnPlayer(); });
     hue = Rarity::GetColorHue(info.Rarity);
 }
+

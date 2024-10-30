@@ -11,8 +11,9 @@ Monster::Monster()
 	render_layer = Layer::Monster;
 	tag.Add(Tag::Monster);
 
-	entityInfo_origin.Spd   = 12;
+	entityInfo_origin.Spd   = 10;
 	entityInfo_origin.MaxHp = 25;
+	entityInfo_origin.Atk   = 5;
 	Hp = 25;
 }
 
@@ -28,8 +29,10 @@ void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 		auto offset = position - other->position;
 		auto offset_spd = entityInfo.Spd * Global::DeltaTime;
 		if (other->tag.Contains(Tag::Player)) {
-			auto entity = (Entity*)other;
+			auto player = (Entity*)other;
 			offset_spd *= 160.0f;
+			DamageInfo damage = DamageInfo::FromEntity(this);
+			damage.Hit(player);
 		}
 		offset.set_length(offset_spd);
 		rigidbody.movement += offset;

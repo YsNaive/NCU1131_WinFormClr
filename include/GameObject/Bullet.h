@@ -7,6 +7,7 @@ class BulletInfo {
 public:
     static const BulletInfo DefaultPlayer;
     static const BulletInfo DefaultMonster;
+    inline BulletInfo() : BulletInfo(0) {}
     inline BulletInfo(float speed, int penetrate = 0, int destroyDistance = 1000, int ignoreTag = 0)
         : Speed(speed), Penetrate(penetrate), DestroyDistance(destroyDistance), IgnoreTag(ignoreTag) {}
 

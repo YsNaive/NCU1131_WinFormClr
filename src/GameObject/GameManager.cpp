@@ -10,6 +10,8 @@ namespace {
 
 void GameManager::Pause()
 {
+    if (Global::TimeScale == 0)
+        return;
     timeScaleCache = Global::TimeScale;
     Global::TimeScale = 0;
 }

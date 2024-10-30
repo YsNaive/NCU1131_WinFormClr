@@ -10,6 +10,17 @@ public:
     inline UI() { tag.Add(Tag::UI); render_layer = Layer::UI; rigidbody.enable = false; }
 };
 
+class UI_Text : public UI {
+public:
+    inline UI_Text(const string& text, Anchor anchor = Anchor::UpperLeft)
+        : text(text), anchor(anchor) {}
+
+    Anchor anchor;
+    string text;
+
+    void Render() override;
+};
+
 class UI_Clickable : public UI {
 public:
     inline UI_Clickable() { tag.Add(Tag::Clickable); }
@@ -53,7 +64,7 @@ public:
     float labelHeightPercent = 0.15f;
 
     void Render()  override;
-    void AssignPlayerUpgrade(const PlayerUpgrade& info);
+    void AssignPlayerUpgrade(PlayerUpgrade& info);
 };
 
 class UI_UpgradeChoices : public UI {

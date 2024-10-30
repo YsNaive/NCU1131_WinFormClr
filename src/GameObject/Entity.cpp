@@ -6,6 +6,12 @@ float& EntityInfo::operator[](int key)
 {
 	if (key == EntityModifierKey::MaxHp)
 		return MaxHp;
+	if (key == EntityModifierKey::MaxSp)
+		return MaxSp;
+	if (key == EntityModifierKey::RegHp)
+		return RegHp;
+	if (key == EntityModifierKey::RegSp)
+		return RegSp;
 	if (key == EntityModifierKey::Spd)
 		return Spd;
 	if (key == EntityModifierKey::Atk)
@@ -36,6 +42,8 @@ void EntityInfo::MakeValid()
 	if (Atk_M  < 0.0f) Atk_M  = 0.0f;
 	if (AtkSpd < 0.0f) AtkSpd = 0.0f;
 	if (DivDeg < 0.0f) DivDeg = 0.0f;
+	if (RegHp  < 0.0f) RegHp  = 0.0f;
+	if (RegSp  < 0.0f) RegSp  = 0.0f;
 	Res_M = clamp(0.0f, 1.0f, Res_M);
 	Res_E = clamp(0.0f, 1.0f, Res_E);
 	CDR   = clamp(0.0f, 1.0f, CDR  );
@@ -84,8 +92,13 @@ void Entity::Update()
 		entityModifiers.erase(modifier);
 
 	entityInfo.MakeValid();
+	Hp += entityInfo.RegHp * Global::DeltaTime;
+	Sp += entityInfo.RegSp * Global::DeltaTime;
+
 	if (Hp > entityInfo.MaxHp)
 		Hp = entityInfo.MaxHp;
+	if (Sp > entityInfo.MaxSp)
+		Sp = entityInfo.MaxSp;
 }
 
 void Entity::AddModifier(EntityModifier* modifier, float addTime)

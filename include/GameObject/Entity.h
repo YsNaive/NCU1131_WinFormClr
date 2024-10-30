@@ -38,20 +38,26 @@ public:
     const static int AtkSpd = (1 << 7);
     const static int DivDeg = (1 << 8);
     const static int CDR    = (1 << 9);
+    const static int MaxSp  = (1 << 10);
+    const static int RegSp  = (1 << 11);
+    const static int RegHp  = (1 << 12);
 };
 
 class EntityInfo {
 public:
     float MaxHp  = 0;
+    float MaxSp  = 0;
+    float RegHp = 0.0;
+    float RegSp = 0.0;
     float Spd    = 0;
     float Def    = 0;
     float Atk    = 0;
     float Res_M  = 0;
     float Atk_M  = 0;
     float Res_E  = 0;
-    float AtkSpd =  1.0f;
+    float AtkSpd = 1.0f;
     float DivDeg = 10.0f;
-    float CDR    =  0.0f;
+    float CDR    = 0.0f;
     float& operator[] (int key);
     void MakeValid();
 };
@@ -76,7 +82,9 @@ class Entity : public GameObject {
 public:
     Entity();
 
-    float Hp;
+    float Hp = 0;
+    float Sp = 0;
+    bool  isDead = false;
     EntityInfo entityInfo;
     EntityInfo entityInfo_origin;
     unordered_map<EntityModifier*, float> entityModifiers;

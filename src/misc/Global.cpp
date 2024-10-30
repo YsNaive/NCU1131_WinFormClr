@@ -8,7 +8,9 @@
 #include "KeyBoardHandler.h"
 
 float   Global::Time          = 0.0f;
+float   Global::RealTime      = 0.0f;
 float   Global::DeltaTime     = 0.0f;
+float   Global::RealDeltaTime = 0.0f;
 float   Global::TimeScale     = 1.0f;
 Vector2	Global::ScreenSize    = { 0.0f,0.0f };
 Vector2	Global::MousePosition = { 0.0f,0.0f };
@@ -42,8 +44,10 @@ namespace {
 		chrono::system_clock::time_point current = chrono::system_clock::now();
 		chrono::duration<double> update_duration = current - last_update_time;
 		last_update_time = current;
-		Global::DeltaTime = update_duration.count() * Global::TimeScale;
-		Global::Time += Global::DeltaTime;
+		Global::RealDeltaTime = update_duration.count();
+		Global::DeltaTime     = Global::RealDeltaTime * Global::TimeScale;
+		Global::Time	 += Global::DeltaTime;
+		Global::RealTime += Global::RealDeltaTime;
 		ups_buffer[Global::UpdateCount % 10] = (1.0f / Global::DeltaTime) / Global::TimeScale;
 		float ups_sum = 0;
 		for (float ups : ups_buffer)

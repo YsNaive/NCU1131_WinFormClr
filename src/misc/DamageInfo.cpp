@@ -12,7 +12,7 @@ DamageInfo DamageInfo::FromEntity(Entity* entity)
 
 void DamageInfo::Hit(Entity* target) const
 {
-    if (target->Hp == numeric_limits<float>().min())
+    if (target->isDead)
         return;
     float totalDamage = 0.0f;
     totalDamage += max(0.0f, Damage - target->entityInfo.Def);
@@ -22,7 +22,7 @@ void DamageInfo::Hit(Entity* target) const
     target->OnHit(*this);
 
     if (target->Hp < 0) {
-        target->Hp = numeric_limits<float>().min();
+        target->isDead = true;
         target->OnDead();
     }
 }

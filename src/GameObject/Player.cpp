@@ -13,13 +13,16 @@ namespace {
 		player->rotation = 0;
 
 		player->Level = 1;
-		player->LevelUpExp = 10;
+		player->LevelUpExp = 5;
 		player->CurrentExp = 0;
 
 		player->entityModifiers.clear();
 
 		player->entityInfo_origin.Spd = 15;
 		player->entityInfo_origin.MaxHp = 100;
+		player->entityInfo_origin.MaxSp = 100;
+		player->entityInfo_origin.RegHp = 0;
+		player->entityInfo_origin.RegSp = 5;
 		player->entityInfo_origin.DivDeg = 5;
 		player->entityInfo_origin.Atk = 10;
 		player->entityInfo_origin.Atk_M = 0;
@@ -28,12 +31,14 @@ namespace {
 		player->entityInfo_origin.Res_M = 0;
 		player->entityInfo_origin.Res_E = 0;
 		player->Hp = player->entityInfo_origin.MaxHp;
+		player->Sp = 0;
 		player->Entity::Update();
 
 		player->bulletGenerator->WavePerShoot = 1;
 		player->bulletGenerator->BulletWave = { 0 };
 
 		player->damageInfo = DamageInfo::FromEntity(player);
+		player->bulletInfo = BulletInfo::DefaultPlayer;
 
 		});
 }
@@ -49,7 +54,7 @@ Player::Player()
 
 
 	bulletGenerator = new BulletGenerator(this, [&]() {
-		auto bullet = new Bullet(&BulletInfo::DefaultPlayer, &damageInfo);
+		auto bullet = new Bullet(&bulletInfo, &damageInfo);
 		bullet->collider.AddRect({ -3,-5,6,10 });
 		return bullet;
 		});
@@ -64,7 +69,7 @@ void Player::ReciveExp(int value)
 	if (CurrentExp >= LevelUpExp) {
 		Level++;
 		CurrentExp -= LevelUpExp;
-		LevelUpExp += 10;
+		LevelUpExp += 1;
 
 		// do level up
 		GameManager::Pause();
@@ -133,4 +138,11 @@ void Player::Render()
 	Drawer::AddFillRect(Color(0, 0, 0), rightWheel);
 	Drawer::AddFillRect(Color(.2, .2, .2), body);
 	Drawer::AddFillRect(Color(.4, .4, .4), gun);
+}
+
+void Player::OnDead()
+{
+	GameManager::Pause();
+	auto msg = new UI_Text("Game Over !", Anchor::MiddleCenter);
+	msg->position = Global::ScreenSize / 4.0;
 }

@@ -23,7 +23,9 @@ public:
     static bool GetKeyUp  (MouseButtons keyCode);
 
     static float    Time;
+    static float    RealTime;
     static float    DeltaTime;
+    static float    RealDeltaTime;
     static float    TimeScale;
     static Vector2	ScreenSize;
     static Vector2	MousePosition;

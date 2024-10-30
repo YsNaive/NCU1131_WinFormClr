@@ -12,11 +12,12 @@ public:
     float attractExpRange = 70;
 
     DamageInfo damageInfo;
+    BulletInfo bulletInfo;
     BulletGenerator* bulletGenerator = nullptr;
-
 
     Player();
     void ReciveExp(int value);
     virtual void Update() override;
     virtual void Render() override;
+    virtual void OnDead() override;
 };
