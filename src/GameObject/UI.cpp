@@ -11,7 +11,31 @@ namespace {
 
 void UI_Text::Render()
 {
-    Drawer::AddText(Color(.1,.1,.1), text, position, anchor);
+    Drawer::AddText(color, text, { 0,0 }, anchor);
+}
+
+void Fade_Text::InitInWorld(Vector2 pos)
+{
+    is_init = true;
+    tag.Remove(Tag::UI);
+    position = pos;
+    start_time = Global::Time;
+}
+
+void Fade_Text::Render()
+{
+    auto tempColor = color;
+    float dt = Global::Time - start_time;
+    if (dt > beginFadeTime) {
+        dt -= beginFadeTime;
+        float r = dt / fadeTime;
+        if (r > 1.0f) {
+            Destroy();
+            tempColor.a = 0;
+        }
+        tempColor.a = color.a * (1.0f - r);
+    }
+    Drawer::AddText(tempColor, text, { 0,0 }, anchor);
 }
 
 void UI_ProgressBar::Update()
