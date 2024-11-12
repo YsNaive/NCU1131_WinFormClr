@@ -98,6 +98,9 @@
     <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp">
       <Filter>src\GameUtils</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameUtils\Resources.cpp">
+      <Filter>src\GameUtils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Window.h">
@@ -170,6 +173,9 @@
       <Filter>include\GameObjcet</Filter>
     </ClInclude>
     <ClInclude Include="include\GameUtils\PlayerUpgrade.h">
+      <Filter>include\GameUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameUtils\Resources.h">
       <Filter>include\GameUtils</Filter>
     </ClInclude>
   </ItemGroup>

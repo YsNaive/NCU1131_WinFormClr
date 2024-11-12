@@ -1,6 +1,7 @@
 
 #include "Player.h"
 
+#include "Resources.h"
 #include "GameManager.h"
 #include "Global.h"
 #include "Drawer.h"
@@ -37,30 +38,38 @@ namespace {
 		player->bulletGenerator->WavePerShoot = 1;
 		player->bulletGenerator->BulletWave = { 0 };
 
-		player->damageInfo = DamageInfo::FromEntity(player);
-		player->bulletInfo = BulletInfo::DefaultPlayer;
-
+		player->weapon_bulletInfo[0] = BulletInfo::DefaultPlayer;
+		auto info = BulletInfo(0, 999, 1, Tag::Player);
+		info.DestroyTimeSec = 0.25;
+		player->weapon_bulletInfo[1] = info;
+		player->isDead = false;
 		});
 }
 
 Player::Player()
 {
 	render_layer = Layer::Player;
-	tag.Add(Tag::Player);
+	tag.Add(Tag::Player | Tag::DontDestroyOnReset);
 	position = { 200,200 };
 	rotation = 45;
-	auto scale = 35.0f;
+	auto scale = 45.0f;
 	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 
-
-	bulletGenerator = new BulletGenerator(this, [&]() {
-		auto bullet = new Bullet(&bulletInfo, &damageInfo);
+	weapon_CreateBullet[0] = [&]() {
+		auto bullet = new Bullet(&weapon_bulletInfo[0], &weapon_damageInfo[0]);
 		bullet->collider.AddRect({ -3,-5,6,10 });
 		return bullet;
-		});
-	bulletGenerator->BulletWave.push_back(0);
-	bulletGenerator->BulletWave.push_back(180);
-	bulletGenerator->WavePerShoot = 5;
+		};
+	weapon_CreateBullet[1] = [&]() {
+		auto bullet = new Bullet(&weapon_bulletInfo[1], &weapon_damageInfo[1]);
+		bullet->collider.AddRect({ -5,-2000,10,2000 });
+		bullet->render_layer = -99;
+		return bullet;
+		};
+	weapon_SpPerSec[0] = 2.5;
+	weapon_SpPerSec[1] = 15;
+	bulletGenerator = new BulletGenerator(this, weapon_CreateBullet[1]);
+	bulletGenerator->tag.Add(Tag::DontDestroyOnReset);
 }
 
 void Player::ReciveExp(int value)
@@ -97,10 +106,20 @@ void Player::ReciveExp(int value)
 	}
 }
 
+void Player::SetUsingWeapon(int index)
+{
+	using_weapon = index;
+	bulletGenerator->CreateBullet = weapon_CreateBullet[index];
+}
+
 void Player::Update()
 {
 	Entity::Update();
-	damageInfo = DamageInfo::FromEntity(this);
+
+	weapon_damageInfo[0] = DamageInfo::FromEntity(this);
+	weapon_damageInfo[1] = DamageInfo::FromEntity(this);
+	weapon_damageInfo[1].Damage *= 0.35;
+	
 	// movement
 	float force = 0;
 	if (Global::GetKey(Keys::W)) {
@@ -117,6 +136,17 @@ void Player::Update()
 	}
 	rigidbody.AddForce(rotation, force * Global::DeltaTime);
 
+	if (Global::GetKeyDown(Keys::D1))
+		SetUsingWeapon(0);
+	if (Global::GetKeyDown(Keys::D2))
+		SetUsingWeapon(1);
+
+	float currCost = weapon_SpPerSec[using_weapon] * Global::DeltaTime;
+	bulletGenerator->enable = Sp > currCost && Global::GetKey(MouseButtons::Left);
+	if (bulletGenerator->enable) {
+		Sp -= currCost;
+	}
+
 	// attract exp
 	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {
 		auto attractForce = position - exp->position;
@@ -127,22 +157,20 @@ void Player::Update()
 
 void Player::Render()
 {
-	const float bodySize = 40;
-	const float wheelExtend = 5;
-	const Rect  body = { -bodySize / 2.0f, -bodySize / 2.0f , bodySize,bodySize };
-	const Rect  leftWheel = { body.x - wheelExtend, body.y - wheelExtend , wheelExtend * 2,bodySize + wheelExtend * 2 };
-	const Rect  rightWheel = { body.get_xMax() - wheelExtend, body.y - wheelExtend , leftWheel.width, leftWheel.height };
-	const Rect  gun = { -wheelExtend / 2.0, -bodySize , wheelExtend, bodySize };
-
-	Drawer::AddFillRect(Color(0, 0, 0), leftWheel);
-	Drawer::AddFillRect(Color(0, 0, 0), rightWheel);
-	Drawer::AddFillRect(Color(.2, .2, .2), body);
+	const float bodySize = 60;
+	const float wheelExtend = 7.5;
+	const Rect  body = { -bodySize / 2.1f, -bodySize / 2.1f , bodySize,bodySize };
+	const Rect  gun = { -wheelExtend / 2.0, -bodySize*0.6f , wheelExtend, bodySize/2.0f };
+	int i = 0;
+	if(rigidbody.movement.get_length() > 1)
+		i = ((int)(Global::Time * 6.0f)) % 2;
+	Drawer::AddImage(RefResources::TankBodys[i], body);
 	Drawer::AddFillRect(Color(.4, .4, .4), gun);
 }
 
 void Player::OnDead()
 {
 	GameManager::Pause();
-	auto msg = new UI_Text("Game Over !", Anchor::MiddleCenter);
-	msg->position = Global::ScreenSize / 4.0;
+	//auto msg = new UI_Text("Game Over !", Anchor::MiddleCenter);
+	//msg->position = Global::ScreenSize / 4.0;
 }

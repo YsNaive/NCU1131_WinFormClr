@@ -36,6 +36,7 @@ void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 		}
 		offset.set_length(offset_spd);
 		rigidbody.movement += offset;
+		position += offset * 0.1f;
 	}
 }
 

@@ -209,6 +209,17 @@ void Drawer::AddText(Color color, const string& text, Vector2 position, float te
 	delete font_temp;
 }
 
+void Drawer::AddImage(Image^ image, Rect position)
+{
+	RefGlobal::CurrentGraphics->DrawImage(
+		image,
+		Drawing::Rectangle(
+			position.x,
+			position.y,
+			position.width,
+			position.height));
+}
+
 void InputEvt::OnPaint(Object^ sender, PaintEventArgs^ e)
 {
 	RefGlobal::CurrentGraphics = e->Graphics;

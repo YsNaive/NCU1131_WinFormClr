@@ -54,4 +54,6 @@ public:
     static void AddText(const string& text, Vector2 position, Anchor anchor = Anchor::UpperLeft);
     static void AddText(Color color, const string& text, Vector2 position, Anchor anchor = Anchor::UpperLeft);
     static void AddText(Color color, const string& text, Vector2 position, float textSize, Anchor anchor = Anchor::UpperLeft);
+    
+    static void AddImage(Image^ image, Rect position);
 };

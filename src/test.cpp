@@ -14,9 +14,6 @@ EntityModifier FrostModifier(
 
 auto test_start = 
 Start::Create([]() {
-	auto area = new EffectArea(numeric_limits<float>().max(), Color(.2, .2, 1, 0.15));
-	area->modifiers.push_back({ &FrostModifier, 0.1 });
-	area->collider.AddRect({ -100,-100,200,200 });
 
 	});
 
@@ -28,7 +25,7 @@ Update::Create([]() {
 		Global::Player->Hp = 100;
 	if (Global::GetKeyDown(Keys::F5))
 		GameManager::Reset(), GameManager::Resume();
-
+	//return;
 	int count = 0;
 	for (auto obj : GameObject::GetInstances())
 		if (obj->tag.Contains(Tag::Monster))
@@ -43,6 +40,5 @@ Update::Create([]() {
 
 auto test_render =
 Render::Create([]() {
-	RefGlobal::CurrentGraphics->ResetTransform();
 
 	});

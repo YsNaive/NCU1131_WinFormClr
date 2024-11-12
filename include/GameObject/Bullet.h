@@ -15,6 +15,7 @@ public:
     int Penetrate = 0;
     int DestroyDistance = 0;
     int IgnoreTag = 0;
+    float DestroyTimeSec = 600;
 };
 
 class Bullet : public GameObject {
@@ -25,6 +26,7 @@ public:
     };
 
     float movedDistance = 0;
+    float aliveTime = 0;
     vector<GameObject*> hit_history;
 
     const BulletInfo* bulletInfo = nullptr;

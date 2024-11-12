@@ -80,6 +80,8 @@ auto object_update = Update::Create([]() {
 		for (int j = i + 1; j < objCount; j++) {
 			auto lhs = objList[i];
 			auto rhs = objList[j];
+			if (!lhs->enable || !rhs->enable)
+				continue;
 			if (lhs->collider.hitboxes.empty() || rhs->collider.hitboxes.empty())
 				continue;
 			if (Collider::IsIgnore(lhs, rhs))
@@ -107,6 +109,7 @@ auto object_update = Update::Create([]() {
 auto render_update = Render::Create([]() {
 	vector<GameObject*> sorted_obj = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer < rhs->render_layer; });
+	RefGlobal::CurrentGraphics->InterpolationMode = Drawing::Drawing2D::InterpolationMode::NearestNeighbor;
 	for (auto* obj : sorted_obj) {
 		Drawer::SetRenderTarget(obj, Global::MainCamera);
 		obj->Render();

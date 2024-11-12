@@ -144,6 +144,7 @@
     <ClCompile Include="src\GameObject\UI.cpp" />
     <ClCompile Include="src\GameUI.cpp" />
     <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp" />
+    <ClCompile Include="src\GameUtils\Resources.cpp" />
     <ClCompile Include="src\misc\callib.cpp" />
     <ClCompile Include="src\misc\Core.cpp" />
     <ClCompile Include="src\misc\DamageInfo.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="include\GameObject\Player.h" />
     <ClInclude Include="include\GameObject\UI.h" />
     <ClInclude Include="include\GameUtils\PlayerUpgrade.h" />
+    <ClInclude Include="include\GameUtils\Resources.h" />
     <ClInclude Include="include\misc\callib.h" />
     <ClInclude Include="include\misc\callib_config.h" />
     <ClInclude Include="include\misc\Core.h" />

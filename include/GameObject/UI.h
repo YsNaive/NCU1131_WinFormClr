@@ -7,7 +7,7 @@ extern class PlayerUpgrade;
 class UI : public GameObject
 {
 public:
-    inline UI() { tag.Add(Tag::UI); render_layer = Layer::UI; rigidbody.enable = false; }
+    inline UI() { tag.Add(Tag::UI | Tag::DontDestroyOnReset); render_layer = Layer::UI; rigidbody.enable = false; }
 };
 
 class UI_Text : public UI {

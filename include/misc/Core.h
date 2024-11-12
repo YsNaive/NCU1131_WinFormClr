@@ -20,11 +20,15 @@ using namespace std;
 using namespace callib;
 
 using System::Drawing::Graphics;
+using System::Drawing::Image;
 using System::Drawing::Pen;
 using System::Drawing::Brush;
 using System::Drawing::SolidBrush;
 using System::Drawing::Drawing2D::LinearGradientBrush;
 using System::Drawing::Drawing2D::GraphicsPath;
+
+template<class T>
+using List = cli::array<T>;
 
 #define PI 3.14159265358979323846
 #define DEG2RAD 0.01745329251
@@ -105,13 +109,14 @@ public:
 class Tag {
 public:
     static const int None      = 0;
-    static const int Entity    = 1;
-    static const int Player    = 2;
-    static const int Monster   = 4;
-    static const int Bullet    = 8;
-    static const int Exp       = 16;
-    static const int UI        = 32;
-    static const int Clickable = 64;
+    static const int DontDestroyOnReset = 1 << 0;
+    static const int Entity    = 1 << 1;
+    static const int Player    = 1 << 2;
+    static const int Monster   = 1 << 3;
+    static const int Bullet    = 1 << 4;
+    static const int Exp       = 1 << 5;
+    static const int UI        = 1 << 6;
+    static const int Clickable = 1 << 7;
 
     int flag = 0;
     inline void Add(const int value) { flag |= value; }

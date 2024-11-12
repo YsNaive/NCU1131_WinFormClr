@@ -3,6 +3,7 @@
 
 class Camera : public GameObject {
 public:
+    inline Camera() { tag.Add(Tag::DontDestroyOnReset); }
     float scale = 1;
     float targetScale = 1;
     Vector2 targetPosition = { 0,0 };

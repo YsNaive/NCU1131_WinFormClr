@@ -12,7 +12,10 @@ void Bullet::Update()
 	offset.set_length(bulletInfo->Speed * Global::DeltaTime);
 	position += offset;
 	movedDistance += bulletInfo->Speed * Global::DeltaTime;
+	aliveTime += Global::DeltaTime;
 	if (movedDistance > bulletInfo->DestroyDistance)
+		this->Destroy();
+	if (aliveTime	  > bulletInfo->DestroyTimeSec)
 		this->Destroy();
 }
 

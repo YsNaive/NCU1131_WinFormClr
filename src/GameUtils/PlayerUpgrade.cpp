@@ -58,6 +58,25 @@ namespace {
         ));
     }
 
+    for (auto& pair : { make_pair(Rarity::Common, 0.10),
+                        make_pair(Rarity::Rare  , 0.20),
+                        make_pair(Rarity::Epic  , 0.35),
+                        make_pair(Rarity::Legend, 0.50) }) {
+        PlayerUpgrade::AllUpgrades[pair.first].push_back(new PlayerUpgrade(
+            "高供能引擎",
+            pair.first,
+            FormatString(" - Sp回復 + %.2f", pair.second),
+            [pair]() {
+                auto modifier = new EntityModifier(
+                    EntityModifierTypes::None | EntityModifierTypes::IsBuff,
+                    EntityModifierKey  ::RegSp,
+                    EntityModifierOP   ::ADD, pair.second);
+                modifierBuffer.push_back(modifier);
+                Global::Player->AddModifier(modifier, numeric_limits<float>().max());
+            }, 5
+        ));
+    }
+
     for (auto& pair : { make_pair(Rarity::Common, 0.25),
                         make_pair(Rarity::Rare  , 0.50),
                         make_pair(Rarity::Epic  , 0.75),
@@ -101,7 +120,8 @@ namespace {
         Rarity::Epic,
         " - 子彈貫穿 + 1",
         []() {
-            Global::Player->bulletInfo.Penetrate += 1;
+            for(auto& info : Global::Player->weapon_bulletInfo)
+                info.Penetrate += 1;
         }, 2
     ));
 
