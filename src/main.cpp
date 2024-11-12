@@ -46,7 +46,7 @@ auto collide_ignore_setup = Start::Create([]() {
 
 	});
 
-bool DebugMode = true;
+bool DebugMode = false;
 auto object_update = Update::Create([]() {
 	auto objList = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	auto objCount = objList.size();
@@ -95,6 +95,9 @@ auto object_update = Update::Create([]() {
 			}
 		}
 	}
+
+	if (Global::GetKeyDown(Keys::F5))
+		GameManager::Reset(), GameManager::Resume();
 
 	// delete destroy object
 	vector<GameObject*> toDestroy;

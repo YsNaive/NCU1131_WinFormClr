@@ -42,6 +42,7 @@ namespace {
 		auto info = BulletInfo(0, 999, 1, Tag::Player);
 		info.DestroyTimeSec = 0.25;
 		player->weapon_bulletInfo[1] = info;
+		player->SetUsingWeapon(0);
 		player->isDead = false;
 		});
 }

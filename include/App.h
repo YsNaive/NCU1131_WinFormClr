@@ -14,4 +14,5 @@
 #include "Player.h"
 #include "Monster.h"
 #include "EffectArea.h"
+#include "GameManager.h"
 
