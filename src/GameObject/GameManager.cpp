@@ -28,7 +28,7 @@ void GameManager::Reset()
     Global::MainCamera->position = Global::Player->position;
 
     for (auto& obj : GameObject::GetInstances()) {
-        if (obj->tag.Any(Tag::Exp | Tag::Monster | Tag::Bullet))
+        if (obj->tag.Contains(Tag::Exp | Tag::Monster | Tag::Bullet))
             obj->Destroy();
     }
 }

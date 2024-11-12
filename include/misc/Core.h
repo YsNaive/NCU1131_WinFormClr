@@ -115,7 +115,7 @@ public:
 
     int flag = 0;
     inline void Add(const int value) { flag |= value; }
-    inline void Remove(const int value) { flag ^= ~value; }
+    inline void Remove(const int value) { flag &= ~value; }
     inline bool Contains(const int value) { return (flag & value) == value; };
     inline bool Any(const int value) { return (flag & value) != 0; };
 };

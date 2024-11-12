@@ -1,6 +1,7 @@
 #pragma once;
 #include "Core.h";
 #include "GameObject.h";
+#include "Camera.h"
 
 extern class PlayerUpgrade;
 
@@ -17,8 +18,23 @@ public:
 
     Anchor anchor;
     string text;
+    Color color = Color(.1f, .1f, .1f);
 
-    void Render() override;
+    virtual void Render() override;
+};
+
+class Fade_Text : public UI_Text {
+    bool is_init = false;
+    float start_time = -1;
+public:
+    inline Fade_Text(const string& text, Anchor anchor = Anchor::UpperLeft)
+        : UI_Text(text, anchor) {}
+
+    float beginFadeTime = 0.35f;
+    float fadeTime = 0.15f;
+
+    void InitInWorld(Vector2 pos);
+    virtual void Render() override;
 };
 
 class UI_Clickable : public UI {

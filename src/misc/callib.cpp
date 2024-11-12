@@ -133,7 +133,12 @@ namespace callib {
 
 	System::Drawing::Color Color::ToDrawingColor()
 	{
-		return System::Drawing::Color::FromArgb(a * 255, r * 255, g * 255, b * 255);
+		return System::Drawing::Color::FromArgb(
+			clamp(0.0f, 255.0f, a * 255.0f),
+			clamp(0.0f, 255.0f, r * 255.0f),
+			clamp(0.0f, 255.0f, g * 255.0f),
+			clamp(0.0f, 255.0f, b * 255.0f)
+			);
 	}
 
 	Color Color::FromHSV(float h, float s, float v, float a)
