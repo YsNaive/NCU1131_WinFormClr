@@ -24,11 +24,11 @@ void GameManager::Resume()
 void GameManager::Reset()
 {
     Pause();
-    GameReset::Invoke();
     Global::MainCamera->position = Global::Player->position;
-
     for (auto& obj : GameObject::GetInstances()) {
         if (!obj->tag.Contains(Tag::DontDestroyOnReset))
             obj->Destroy();
     }
+
+    GameReset::Invoke();
 }

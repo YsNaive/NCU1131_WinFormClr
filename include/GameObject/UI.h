@@ -44,6 +44,16 @@ public:
     vector<function<void()>> OnClick;
 };
 
+class UI_Button : public UI_Clickable {
+public:
+    inline UI_Button(const string& label)
+        :label(label) {}
+    string label;
+    Rect bound;
+
+    void Render() override;
+};
+
 class UI_ProgressBar : public UI {
 private:
     float currentValue;

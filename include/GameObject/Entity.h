@@ -84,6 +84,7 @@ public:
 
     float Hp = 0;
     float Sp = 0;
+    float Mp = 0;
     bool  isDead = false;
     EntityInfo entityInfo;
     EntityInfo entityInfo_origin;

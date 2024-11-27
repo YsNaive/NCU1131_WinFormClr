@@ -21,7 +21,7 @@ void DamageInfo::Hit(Entity* target) const
     target->Hp -= totalDamage;
     target->OnHit(*this);
 
-    if (target->Hp < 0) {
+    if (target->Hp <= 0) {
         target->isDead = true;
         target->OnDead();
     }

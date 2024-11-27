@@ -108,3 +108,10 @@ void UI_Card::AssignPlayerUpgrade(PlayerUpgrade& info)
     hue = Rarity::GetColorHue(info.Rarity);
 }
 
+void UI_Button::Render()
+{
+    Drawer::AddFillRect(Color(.25, .25, .25), bound);
+    Drawer::AddRect    (Color(.15, .15, .15), bound, 2.5);
+
+    Drawer::AddText(Color(.85, .85, .85), label, bound.get_center(), 12, Anchor::MiddleCenter);
+}

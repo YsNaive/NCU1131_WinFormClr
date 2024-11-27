@@ -23,6 +23,8 @@ void main() {
 	RefGlobal::MainWindow->Height = 600;
 
 	Start::Invoke();
+	GameManager::Reset();
+	GameManager::Resume();
 	Application::Run(RefGlobal::MainWindow);
 }
 

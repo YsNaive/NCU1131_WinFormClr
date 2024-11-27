@@ -4,6 +4,9 @@
 #include "BulletGenerator.h"
 #include "UI.h"
 
+
+class OnLevelUp : public GlobalEvent<OnLevelUp, void> {};
+
 class Player : public Entity {
 private:
     static constexpr int weapon_count = 2;
@@ -14,6 +17,7 @@ public:
     float CurrentExp = 0;
     float LevelUpExp = 50;
     float attractExpRange = 70;
+    float bullet_spd_mul = 1.0f;
 
     BulletGenerator* bulletGenerator = nullptr;
 

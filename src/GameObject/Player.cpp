@@ -14,7 +14,7 @@ namespace {
 		player->rotation = 0;
 
 		player->Level = 1;
-		player->LevelUpExp = 5;
+		player->LevelUpExp = 30;
 		player->CurrentExp = 0;
 
 		player->entityModifiers.clear();
@@ -23,7 +23,7 @@ namespace {
 		player->entityInfo_origin.MaxHp = 100;
 		player->entityInfo_origin.MaxSp = 100;
 		player->entityInfo_origin.RegHp = 0;
-		player->entityInfo_origin.RegSp = 5;
+		//player->entityInfo_origin.RegSp = 5;
 		player->entityInfo_origin.DivDeg = 5;
 		player->entityInfo_origin.Atk = 10;
 		player->entityInfo_origin.Atk_M = 0;
@@ -32,17 +32,10 @@ namespace {
 		player->entityInfo_origin.Res_M = 0;
 		player->entityInfo_origin.Res_E = 0;
 		player->Hp = player->entityInfo_origin.MaxHp;
-		player->Sp = 0;
+		player->Sp = player->entityInfo_origin.MaxSp;
+		player->Mp = player->entityInfo_origin.MaxSp;
 		player->Entity::Update();
 
-		player->bulletGenerator->WavePerShoot = 1;
-		player->bulletGenerator->BulletWave = { 0 };
-
-		player->weapon_bulletInfo[0] = BulletInfo::DefaultPlayer;
-		auto info = BulletInfo(0, 999, 1, Tag::Player);
-		info.DestroyTimeSec = 0.25;
-		player->weapon_bulletInfo[1] = info;
-		player->SetUsingWeapon(0);
 		player->isDead = false;
 		});
 }
@@ -56,21 +49,6 @@ Player::Player()
 	auto scale = 45.0f;
 	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 
-	weapon_CreateBullet[0] = [&]() {
-		auto bullet = new Bullet(&weapon_bulletInfo[0], &weapon_damageInfo[0]);
-		bullet->collider.AddRect({ -3,-5,6,10 });
-		return bullet;
-		};
-	weapon_CreateBullet[1] = [&]() {
-		auto bullet = new Bullet(&weapon_bulletInfo[1], &weapon_damageInfo[1]);
-		bullet->collider.AddRect({ -5,-2000,10,2000 });
-		bullet->render_layer = -99;
-		return bullet;
-		};
-	weapon_SpPerSec[0] = 2.5;
-	weapon_SpPerSec[1] = 15;
-	bulletGenerator = new BulletGenerator(this, weapon_CreateBullet[1]);
-	bulletGenerator->tag.Add(Tag::DontDestroyOnReset);
 }
 
 void Player::ReciveExp(int value)
@@ -79,38 +57,17 @@ void Player::ReciveExp(int value)
 	if (CurrentExp >= LevelUpExp) {
 		Level++;
 		CurrentExp -= LevelUpExp;
-		LevelUpExp += 1;
+		entityInfo_origin.Spd *= 2;
+		OnLevelUp::Invoke();
 
-		// do level up
-		GameManager::Pause();
-		entityInfo_origin.Atk   += 1;
-		entityInfo_origin.MaxHp += 10;
-		this->Entity::Update();
-		Hp = entityInfo.MaxHp;
-
-		Vector2 cardSize = { 180,300 };
-		Vector2 centerPos = Global::ScreenSize / 2.0 - cardSize / 2.0;
-		UI_Card* cards[] = {new UI_Card(cardSize) ,new UI_Card(cardSize) ,new UI_Card(cardSize)};
-		auto closeFunc = [cards]() {
-			cards[0]->Destroy();
-			cards[1]->Destroy();
-			cards[2]->Destroy();
-			GameManager::Resume();
-		};
-		for (auto* card : cards) {
-			card->position = centerPos;
-			card->OnClick.push_back(closeFunc);
-			card->AssignPlayerUpgrade(Rand::PlayerUpgrade());
-		}
-		cards[0]->position.x -= cardSize.x * 1.5f;
-		cards[2]->position.x += cardSize.x * 1.5f;
+		auto text = new Fade_Text("Level UP!", Anchor::UpperCenter);
+		text->color = { .2,.5,.2 };
+		text->InitInWorld({ position.x, position.y - 45 });
 	}
 }
 
 void Player::SetUsingWeapon(int index)
 {
-	using_weapon = index;
-	bulletGenerator->CreateBullet = weapon_CreateBullet[index];
 }
 
 void Player::Update()
@@ -141,12 +98,6 @@ void Player::Update()
 		SetUsingWeapon(0);
 	if (Global::GetKeyDown(Keys::D2))
 		SetUsingWeapon(1);
-
-	float currCost = weapon_SpPerSec[using_weapon] * Global::DeltaTime;
-	bulletGenerator->enable = Sp > currCost && Global::GetKey(MouseButtons::Left);
-	if (bulletGenerator->enable) {
-		Sp -= currCost;
-	}
 
 	// attract exp
 	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {
