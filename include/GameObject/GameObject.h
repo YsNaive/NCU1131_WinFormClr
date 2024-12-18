@@ -50,6 +50,7 @@ protected:
 public:
     ~GameObject();
     static const unordered_set<GameObject*>& GetInstances();
+    static unordered_set<GameObject*> GetInstances(int tagMask);
     //static const InstancesTable& GetInstancesTable();
     inline virtual void Update() {};
     inline virtual void Render() {};

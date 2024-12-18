@@ -38,11 +38,9 @@ namespace {
 		player->bulletGenerator->WavePerShoot = 1;
 		player->bulletGenerator->BulletWave = { 0 };
 
-		player->weapon_bulletInfo[0] = BulletInfo::DefaultPlayer;
+		player->weapon_bulletInfo = BulletInfo::DefaultPlayer;
 		auto info = BulletInfo(0, 999, 1, Tag::Player);
 		info.DestroyTimeSec = 0.25;
-		player->weapon_bulletInfo[1] = info;
-		player->SetUsingWeapon(0);
 		player->isDead = false;
 		});
 }
@@ -56,20 +54,12 @@ Player::Player()
 	auto scale = 45.0f;
 	collider.AddRect({ -scale / 2.0f, -scale / 2.0f , scale, scale });
 
-	weapon_CreateBullet[0] = [&]() {
-		auto bullet = new Bullet(&weapon_bulletInfo[0], &weapon_damageInfo[0]);
+	weapon_CreateBullet= [&]() {
+		auto bullet = new Bullet(&weapon_bulletInfo, &weapon_damageInfo);
 		bullet->collider.AddRect({ -3,-5,6,10 });
 		return bullet;
 		};
-	weapon_CreateBullet[1] = [&]() {
-		auto bullet = new Bullet(&weapon_bulletInfo[1], &weapon_damageInfo[1]);
-		bullet->collider.AddRect({ -5,-2000,10,2000 });
-		bullet->render_layer = -99;
-		return bullet;
-		};
-	weapon_SpPerSec[0] = 2.5;
-	weapon_SpPerSec[1] = 15;
-	bulletGenerator = new BulletGenerator(this, weapon_CreateBullet[1]);
+	bulletGenerator = new BulletGenerator(this, weapon_CreateBullet);
 	bulletGenerator->tag.Add(Tag::DontDestroyOnReset);
 }
 
@@ -107,19 +97,11 @@ void Player::ReciveExp(int value)
 	}
 }
 
-void Player::SetUsingWeapon(int index)
-{
-	using_weapon = index;
-	bulletGenerator->CreateBullet = weapon_CreateBullet[index];
-}
-
 void Player::Update()
 {
 	Entity::Update();
 
-	weapon_damageInfo[0] = DamageInfo::FromEntity(this);
-	weapon_damageInfo[1] = DamageInfo::FromEntity(this);
-	weapon_damageInfo[1].Damage *= 0.35;
+	weapon_damageInfo = DamageInfo::FromEntity(this);
 	
 	// movement
 	float force = 0;
@@ -136,17 +118,6 @@ void Player::Update()
 		rotation += 150 * Global::DeltaTime;
 	}
 	rigidbody.AddForce(rotation, force * Global::DeltaTime);
-
-	if (Global::GetKeyDown(Keys::D1))
-		SetUsingWeapon(0);
-	if (Global::GetKeyDown(Keys::D2))
-		SetUsingWeapon(1);
-
-	float currCost = weapon_SpPerSec[using_weapon] * Global::DeltaTime;
-	bulletGenerator->enable = Sp > currCost && Global::GetKey(MouseButtons::Left);
-	if (bulletGenerator->enable) {
-		Sp -= currCost;
-	}
 
 	// attract exp
 	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {

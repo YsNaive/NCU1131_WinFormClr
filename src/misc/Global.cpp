@@ -63,4 +63,8 @@ namespace {
 		InputEvt::ClearKeyBoardInput();
 		Global::UpdateCount++;
 		});
+
+	auto value_reset = GameReset::Create([]() {
+		Global::Time = 0.0f;
+		});
 }

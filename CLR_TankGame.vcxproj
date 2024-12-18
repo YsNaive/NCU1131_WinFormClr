@@ -143,6 +143,7 @@
     <ClCompile Include="src\GameObject\Player.cpp" />
     <ClCompile Include="src\GameObject\UI.cpp" />
     <ClCompile Include="src\GameUI.cpp" />
+    <ClCompile Include="src\GameUtils\MonsterGenerate.cpp" />
     <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp" />
     <ClCompile Include="src\GameUtils\Resources.cpp" />
     <ClCompile Include="src\misc\callib.cpp" />
@@ -154,7 +155,6 @@
     <ClCompile Include="src\misc\MouseHandler.cpp" />
     <ClCompile Include="src\misc\Rand.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h" />

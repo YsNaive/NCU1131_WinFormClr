@@ -120,8 +120,7 @@ namespace {
         Rarity::Epic,
         " - ¤l¼u³e¬ï + 1",
         []() {
-            for(auto& info : Global::Player->weapon_bulletInfo)
-                info.Penetrate += 1;
+            Global::Player->weapon_bulletInfo.Penetrate += 1;
         }, 2
     ));
 

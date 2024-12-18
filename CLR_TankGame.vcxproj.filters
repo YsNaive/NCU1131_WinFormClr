@@ -74,9 +74,6 @@
     <ClCompile Include="src\GameObject\Bullet.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\test.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameObject\EffectArea.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
       <Filter>src\GameUtils</Filter>
     </ClCompile>
     <ClCompile Include="src\GameUtils\Resources.cpp">
+      <Filter>src\GameUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameUtils\MonsterGenerate.cpp">
       <Filter>src\GameUtils</Filter>
     </ClCompile>
   </ItemGroup>

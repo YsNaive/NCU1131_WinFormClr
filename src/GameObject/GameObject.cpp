@@ -206,6 +206,17 @@ const unordered_set<GameObject*>& GameObject::GetInstances()
 	return m_GetInstances();
 }
 
+unordered_set<GameObject*> GameObject::GetInstances(int tagMask)
+{
+	unordered_set<GameObject*> ret;
+	for (auto* obj : m_GetInstances()) {
+		if (obj->tag.Contains(tagMask)) {
+			ret.insert(obj);
+		}
+	}
+	return ret;
+}
+
 void GameObject::Destroy()
 {
 	mark_destory = true;
