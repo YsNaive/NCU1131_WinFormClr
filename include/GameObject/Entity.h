@@ -38,17 +38,13 @@ public:
     const static int AtkSpd = (1 << 7);
     const static int DivDeg = (1 << 8);
     const static int CDR    = (1 << 9);
-    const static int MaxSp  = (1 << 10);
-    const static int RegSp  = (1 << 11);
-    const static int RegHp  = (1 << 12);
+    const static int RegHp  = (1 << 10);
 };
 
 class EntityInfo {
 public:
     float MaxHp  = 0;
-    float MaxSp  = 0;
     float RegHp = 0.0;
-    float RegSp = 0.0;
     float Spd    = 0;
     float Def    = 0;
     float Atk    = 0;
@@ -83,7 +79,6 @@ public:
     Entity();
 
     float Hp = 0;
-    float Sp = 0;
     bool  isDead = false;
     EntityInfo entityInfo;
     EntityInfo entityInfo_origin;

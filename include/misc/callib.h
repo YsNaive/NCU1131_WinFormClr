@@ -191,6 +191,11 @@ namespace callib {
 			float rad = deg * 0.01745329251;
 			return { (float)sin(rad), -(float)cos(rad) };
 		}
+		static float ToDegree(Vector2 vec) {
+			float rad = atan2(vec.x, -vec.y); 
+			float deg = rad * 57.2957795131;
+			return deg;
+		}
 
 		Vector2	get_abs() const {
 			return { abs(x), abs(y) };

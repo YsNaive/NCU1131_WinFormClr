@@ -21,18 +21,15 @@ namespace {
 
 		player->entityInfo_origin.Spd = 15;
 		player->entityInfo_origin.MaxHp = 100;
-		player->entityInfo_origin.MaxSp = 100;
 		player->entityInfo_origin.RegHp = 0;
-		player->entityInfo_origin.RegSp = 5;
 		player->entityInfo_origin.DivDeg = 5;
 		player->entityInfo_origin.Atk = 10;
 		player->entityInfo_origin.Atk_M = 0;
 		player->entityInfo_origin.AtkSpd = 1.25;
-		player->entityInfo_origin.Def = 0;
+		player->entityInfo_origin.Def = 99999;
 		player->entityInfo_origin.Res_M = 0;
 		player->entityInfo_origin.Res_E = 0;
 		player->Hp = player->entityInfo_origin.MaxHp;
-		player->Sp = 0;
 		player->Entity::Update();
 
 		player->bulletGenerator->WavePerShoot = 1;

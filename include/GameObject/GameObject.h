@@ -51,6 +51,16 @@ public:
     ~GameObject();
     static const unordered_set<GameObject*>& GetInstances();
     static unordered_set<GameObject*> GetInstances(int tagMask);
+    template<class T>
+    static unordered_set<GameObject*> GetInstancesByType(int tagMask) {
+        auto objs = GameObject::GetInstances(tagMask);
+        unordered_set<GameObject*> ret;
+        for (GameObject* obj : objs) {
+            if (dynamic_cast<T*>(obj))
+                ret.insert(obj);
+        }
+        return ret;
+    }
     //static const InstancesTable& GetInstancesTable();
     inline virtual void Update() {};
     inline virtual void Render() {};

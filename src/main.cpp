@@ -99,6 +99,12 @@ auto object_update = Update::Create([]() {
 	if (Global::GetKeyDown(Keys::F5))
 		GameManager::Reset(), GameManager::Resume();
 
+	if (Global::GetKeyDown(Keys::Space)) {
+		if (Global::TimeScale == 0)
+			GameManager::Resume();
+		else
+			GameManager::Pause();
+	}
 	// delete destroy object
 	vector<GameObject*> toDestroy;
 	for (auto obj : GameObject::GetInstances()) {

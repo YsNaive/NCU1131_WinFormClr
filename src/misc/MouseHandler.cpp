@@ -29,6 +29,7 @@ void InputEvt::ClearMouseInput()
 	s_mouseState[0][2] = false;
 	s_mouseState[1][0] = false;
 	s_mouseState[1][2] = false;
+	Global::MouseScroller = 0;
 }
 
 bool Global::GetKey(MouseButtons keyCode)
