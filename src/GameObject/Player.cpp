@@ -14,7 +14,7 @@ namespace {
 		player->rotation = 0;
 
 		player->Level = 1;
-		player->LevelUpExp = 5;
+		player->LevelUpExp = 10;
 		player->CurrentExp = 0;
 
 		player->entityModifiers.clear();
@@ -66,7 +66,7 @@ void Player::ReciveExp(int value)
 	if (CurrentExp >= LevelUpExp) {
 		Level++;
 		CurrentExp -= LevelUpExp;
-		LevelUpExp += 1;
+		LevelUpExp += 10;
 
 		// do level up
 		GameManager::Pause();

@@ -78,3 +78,15 @@ public:
     Collider collider;
     Rigidbody rigidbody;
 };
+
+class FuncGameObject : public GameObject{
+public:
+    inline FuncGameObject(function<void()> on_update, function<void()> on_render)
+        : on_update(on_update), on_render(on_render) {}
+
+    function<void()> on_update = nullptr;
+    function<void()> on_render = nullptr;
+
+    inline virtual void Update()override { if (on_update)on_update(); };
+    inline virtual void Render()override { if (on_render)on_render(); };
+};

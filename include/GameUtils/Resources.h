@@ -16,7 +16,7 @@ public:
 
 	static List<Image^>^ TankBodys;
 	static Image^ TankGun;
-	static List<Image^>^ ForestBackground;
+	static Image^ ForestBackground;
 
 	static Image^ NormalMonster;
 	static Image^ ShooterMonster;

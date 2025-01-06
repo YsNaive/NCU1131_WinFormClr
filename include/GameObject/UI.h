@@ -5,6 +5,8 @@
 
 extern class PlayerUpgrade;
 
+void PauseAndShowText(const string& text);
+
 class UI : public GameObject
 {
 public:

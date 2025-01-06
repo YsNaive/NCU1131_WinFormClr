@@ -3,10 +3,12 @@
 #include "Drawer.h"
 #include "Global.h"
 #include "PlayerUpgrade.h"
+#include "GameManager.h"
 
 namespace {
     static constexpr float AnimationRate = 10.0f;
     static constexpr float BorderPadding = 2.5f;
+
 }
 
 void UI_Text::Render()

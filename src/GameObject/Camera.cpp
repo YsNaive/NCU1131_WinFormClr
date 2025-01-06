@@ -26,7 +26,7 @@ namespace {
 		int c = 0;
 		if (ImgBuffer::f0 == nullptr ||
 			ImgBuffer::f0->Size.Width != width)
-			ImgBuffer::f0 = RefResources::ResizeImage(RefResources::ForestBackground[0], width, width);
+			ImgBuffer::f0 = RefResources::ResizeImage(RefResources::ForestBackground, width, width);
 		while (pos.x < Global::ScreenSize.x) {
 			pos.y = begin_pos.y;
 			while (pos.y < Global::ScreenSize.y) {
