@@ -26,7 +26,7 @@ namespace {
 		player->entityInfo_origin.Atk = 10;
 		player->entityInfo_origin.Atk_M = 0;
 		player->entityInfo_origin.AtkSpd = 1.25;
-		player->entityInfo_origin.Def = 99999;
+		player->entityInfo_origin.Def = 0;
 		player->entityInfo_origin.Res_M = 0;
 		player->entityInfo_origin.Res_E = 0;
 		player->Hp = player->entityInfo_origin.MaxHp;
@@ -54,6 +54,7 @@ Player::Player()
 	weapon_CreateBullet= [&]() {
 		auto bullet = new Bullet(&weapon_bulletInfo, &weapon_damageInfo);
 		bullet->collider.AddRect({ -3,-5,6,10 });
+		bullet->color_h = 175;
 		return bullet;
 		};
 	bulletGenerator = new BulletGenerator(this, weapon_CreateBullet);
@@ -66,16 +67,16 @@ void Player::ReciveExp(int value)
 	if (CurrentExp >= LevelUpExp) {
 		Level++;
 		CurrentExp -= LevelUpExp;
-		LevelUpExp += 10;
+		LevelUpExp += 2;
 
 		// do level up
 		GameManager::Pause();
 		entityInfo_origin.Atk   += 1;
-		entityInfo_origin.MaxHp += 10;
+		entityInfo_origin.MaxHp += 5;
 		this->Entity::Update();
 		Hp = entityInfo.MaxHp;
 
-		Vector2 cardSize = { 180,300 };
+		Vector2 cardSize = { 200,300 };
 		Vector2 centerPos = Global::ScreenSize / 2.0 - cardSize / 2.0;
 		UI_Card* cards[] = {new UI_Card(cardSize) ,new UI_Card(cardSize) ,new UI_Card(cardSize)};
 		auto closeFunc = [cards]() {
@@ -116,6 +117,12 @@ void Player::Update()
 	}
 	rigidbody.AddForce(rotation, force * Global::DeltaTime);
 
+	if (Global::GetKey(Keys::Back)) {
+		ReciveExp(10);
+	}
+	if (Global::GetKey(Keys::Enter)) {
+		Global::Time += 10;
+	}
 	// attract exp
 	for (auto exp : Collider::FindObject({ position, attractExpRange }, [](GameObject* m) {return m->tag.Contains(Tag::Exp); })) {
 		auto attractForce = position - exp->position;
@@ -140,6 +147,7 @@ void Player::Render()
 void Player::OnDead()
 {
 	GameManager::Pause();
+	PauseAndShowText(FormatString("Game Over !\nYou Survive  %d  seconds\n\npress \"F5\" to try again...", (int)Global::Time), false);
 	//auto msg = new UI_Text("Game Over !", Anchor::MiddleCenter);
 	//msg->position = Global::ScreenSize / 4.0;
 }

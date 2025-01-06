@@ -23,9 +23,12 @@ void EffectArea::Render()
 
 void EffectArea::OnCollide(GameObject* other, CollideInfo collideInfo)
 {
-    if (other->tag.Contains(Tag::Entity)) {
-        auto entity = (Entity*)other;
-        for (auto& pair : modifiers)
-            entity->SetModifier(pair.first, pair.second);
-    }
+    if (!other->tag.Contains(Tag::Entity))
+        return;
+    if (!other->tag.Any(this->tagFilter))
+        return;
+
+    auto entity = (Entity*)other;
+    for (auto& pair : modifiers)
+        entity->SetModifier(pair.first, pair.second);
 }

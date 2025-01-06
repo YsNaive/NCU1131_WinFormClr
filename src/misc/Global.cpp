@@ -7,14 +7,15 @@
 #include "MouseHandler.h"
 #include "KeyBoardHandler.h"
 
-float   Global::Time          = 0.0f;
-float   Global::RealTime      = 0.0f;
-float   Global::DeltaTime     = 0.0f;
-float   Global::RealDeltaTime = 0.0f;
-float   Global::TimeScale     = 1.0f;
-Vector2	Global::ScreenSize    = { 0.0f,0.0f };
-Vector2	Global::MousePosition = { 0.0f,0.0f };
-float   Global::MouseScroller = 0.0f;
+float   Global::Time           = 0.0f;
+float   Global::RealTime       = 0.0f;
+float   Global::DeltaTime      = 0.0f;
+float   Global::RealDeltaTime  = 0.0f;
+float   Global::TimeScale      = 1.0f;
+Vector2	Global::ScreenSize     = { 0.0f,0.0f };
+float   Global::ScreenDiagonal = 0.0f;
+Vector2	Global::MousePosition  = { 0.0f,0.0f };
+float   Global::MouseScroller  = 0.0f;
 int     Global::UpdatePerSecond = 0;
 long long int Global::UpdateCount = 0;
 
@@ -39,6 +40,7 @@ namespace {
 		Global::ScreenSize = { (float)window->Size.Width,  (float)window->Size.Height };
 		Global::ScreenSize.x -= 14;
 		Global::ScreenSize.y -= 39;
+		Global::ScreenDiagonal = Global::ScreenSize.get_length();
 
 		// time
 		chrono::system_clock::time_point current = chrono::system_clock::now();

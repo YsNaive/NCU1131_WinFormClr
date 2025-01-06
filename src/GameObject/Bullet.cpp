@@ -22,8 +22,8 @@ void Bullet::Update()
 void Bullet::Render()
 {
 	for (auto& poly : collider.hitboxes) {
-		Drawer::AddFillPoly(Color(.9, .4, .4), poly);
-		Drawer::AddPoly(Color(.6, .4, .4), poly);
+		Drawer::AddFillPoly(Color::FromHSV(color_h, 0.5, 0.75), poly);
+		Drawer::AddPoly(Color::FromHSV(color_h, 0.5, 0.5), poly);
 	}
 }
 

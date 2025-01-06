@@ -28,6 +28,7 @@ public:
     static float    RealDeltaTime;
     static float    TimeScale;
     static Vector2	ScreenSize;
+    static float	ScreenDiagonal;
     static Vector2	MousePosition;
     static float    MouseScroller;
     static int      UpdatePerSecond;

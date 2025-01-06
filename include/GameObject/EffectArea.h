@@ -9,6 +9,7 @@ public :
     float remainTime = 0;
     vector<pair<EntityModifier*, float>> modifiers;
     Color color;
+    int tagFilter = ~0;
 
     EffectArea(float remainTime, Color color = { 0,0,0,0.1f });
 

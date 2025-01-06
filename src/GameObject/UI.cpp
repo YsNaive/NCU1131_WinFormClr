@@ -13,7 +13,10 @@ namespace {
 
 void UI_Text::Render()
 {
-    Drawer::AddText(color, text, { 0,0 }, anchor);
+    if(size == -1)
+        Drawer::AddText(color, text, { 0,0 }, anchor);
+    else
+        Drawer::AddText(color, text, { 0,0 }, size, anchor);
 }
 
 void Fade_Text::InitInWorld(Vector2 pos)
@@ -110,3 +113,18 @@ void UI_Card::AssignPlayerUpgrade(PlayerUpgrade& info)
     hue = Rarity::GetColorHue(info.Rarity);
 }
 
+void UI_Button::SetBound(const Rect& bound)
+{
+    this->bound = bound;
+    collider.hitboxes.clear();
+    collider.AddRect(bound);
+}
+
+void UI_Button::Render()
+{
+
+    Drawer::AddFillRect(Color::FromHSV(color_h, color_s, 0.25), bound);
+    Drawer::AddRect(Color::FromHSV(color_h, color_s, 0.15), bound, 2.5);
+
+    Drawer::AddText(Color::FromHSV(color_h, color_s, 0.85), label, bound.get_center(), 12, Anchor::MiddleCenter);
+}

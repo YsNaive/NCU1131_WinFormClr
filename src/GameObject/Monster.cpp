@@ -7,23 +7,48 @@
 #include "Player.h"
 #include "Resources.h"
 
+namespace {
+	auto monster_init =
+	Start::Create([]() {
+		ShooterMonster::BulletInfo.Penetrate = 0;
+		ShooterMonster::BulletInfo.Speed     = 100;
+		ShooterMonster::DamageInfo.Damage    = 15;
+		ShooterMonster::DamageInfo.Damage_E  = 0;
+		ShooterMonster::DamageInfo.Damage_M  = 0;
+	});
+}
+
+BulletInfo ShooterMonster::BulletInfo = BulletInfo::DefaultMonster;
+DamageInfo ShooterMonster::DamageInfo;
+
+EntityModifier HealMonster::Modifier = EntityModifier(
+	EntityModifierTypes::None,
+	EntityModifierKey  ::RegHp,
+	EntityModifierOP   ::ADD,
+	5
+);
+
 Monster::Monster()
 {
 	render_layer = Layer::Monster;
 	tag.Add(Tag::Monster);
 
-	entityInfo_origin.Spd   = 10;
-	entityInfo_origin.MaxHp = 10;
-	entityInfo_origin.Atk   = 5;
-	Hp = 10;
+	entityInfo_origin.Spd   = 6;
+	entityInfo_origin.MaxHp = 15;
+	entityInfo_origin.Atk   = 10;
+	Hp = 25;
 }
 
 void Monster::Update()
 {
 	Entity::Update();
-	auto dir = Global::Player->position - position;
-	rotation = Vector2::ToDegree(dir);
-	rigidbody.AddForce(dir, entityInfo.Spd * Global::DeltaTime);
+	if (Hp != lastHp) {
+		lastHpChangedTime = Global::Time;
+		lastHp = Hp;
+	}
+	if ((position - Global::Player->position).get_length() > 600) {
+		this->RandomLocateOnPlayer();
+	}
 }
 
 void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
@@ -43,11 +68,6 @@ void Monster::OnCollide(GameObject* other, CollideInfo collideInfo)
 	}
 }
 
-void Monster::OnHit(const DamageInfo& info)
-{
-	lastHitTime = Global::Time;
-}
-
 void Monster::OnDead()
 {
 	for (int i = 0, imax = Rand::Int(1, 3); i < imax; i++) {
@@ -59,7 +79,7 @@ void Monster::OnDead()
 }
 
 void Monster::Render() {
-	float hit_dt = Global::Time - lastHitTime;
+	float hit_dt = Global::Time - lastHpChangedTime;
 	const Rect hp_bar_bound = { -15,-25,30,7.5 };
 	if (hit_dt < 1.5f) {
 		Drawer::AddRotation(-rotation);
@@ -76,6 +96,14 @@ void Monster::Render() {
 	}
 }
 
+void Monster::RandomLocateOnPlayer()
+{
+	this->position = Global::Player->position;
+	Vector2 offset = Vector2::FromDegree(Rand::Float(-180, 180));
+	offset.set_length(500);
+	this->position += offset;
+}
+
 NormalMonster::NormalMonster(float size_radius)
 {
 	float width = size_radius;
@@ -84,6 +112,14 @@ NormalMonster::NormalMonster(float size_radius)
 		{width,width},
 		{0,-width},
 		}));
+}
+
+void NormalMonster::Update()
+{
+	Monster::Update();
+	auto dir = Global::Player->position - position;
+	rotation = Vector2::ToDegree(dir);
+	rigidbody.AddForce(dir, entityInfo.Spd * Global::DeltaTime);
 }
 
 void NormalMonster::Render()
@@ -101,7 +137,7 @@ ShooterMonster::ShooterMonster(float size_radius)
 
 void ShooterMonster::Update()
 {
-	Entity::Update();
+	Monster::Update();
 	auto dir = Global::Player->position - position;
 	rotation = Vector2::ToDegree(dir);
 	auto distance = dir.get_length();
@@ -120,10 +156,57 @@ void ShooterMonster::Update()
 		dir += (position - other->position);
 	}
 	rigidbody.AddForce(dir, entityInfo.Spd * 0.5 * Global::DeltaTime);
+
+	if ((Global::Time - lastShootTime) > 2.0f) {
+		lastShootTime = Global::Time;
+		auto bullet = new Bullet(&ShooterMonster::BulletInfo, &ShooterMonster::DamageInfo);
+		bullet->collider.AddRect({ -3,-5,6,10 });
+		bullet->color_h = 0;
+		bullet->position = this->position;
+		bullet->rotation = this->rotation;
+	}
+
 }
 
 void ShooterMonster::Render()
 {
 	Monster::Render();
 	Drawer::AddImage(RefResources::ShooterMonster, collider.hitboxes[0].get_boundingBox());
+}
+
+HealMonster::HealMonster(float size_radius)
+{
+	float width = size_radius;
+	collider.AddRect({ -size_radius,-size_radius, size_radius * 2,size_radius * 2 });
+	effectArea = new EffectArea(numeric_limits<float>().max(), Color(1, 0.35, 0, 0.075f));
+	effectArea->tagFilter = Tag::Monster;
+	effectArea->modifiers.push_back({ &HealMonster::Modifier , 0.5f});
+	effectArea->collider.AddCircle({ {0,0}, 100 });
+	effectArea->render_layer = Layer::Effect;
+}
+
+void HealMonster::Update()
+{
+	Monster::Update();
+
+	Vector2 dir = { 0,0 };
+	for (auto* obj : GameObject::GetInstances(Tag::Monster)) {
+		auto* other = (Monster*)obj;
+		dir += (other->position - this->position);
+	}
+	this->rotation += 90 * Global::DeltaTime;
+	rigidbody.AddForce(dir, entityInfo.Spd * Global::DeltaTime);
+	effectArea->position = this->position;
+}
+
+void HealMonster::Render()
+{
+	Monster::Render();
+	Drawer::AddImage(RefResources::HealMonster, collider.hitboxes[0].get_boundingBox());
+}
+
+void HealMonster::OnDead()
+{
+	Monster::OnDead();
+	effectArea->Destroy();
 }

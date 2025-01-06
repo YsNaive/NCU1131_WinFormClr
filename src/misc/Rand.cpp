@@ -39,7 +39,7 @@ int Rand::Rarity(float chance_lengend, float chance_epic, float chance_rare)
 
 PlayerUpgrade& Rand::PlayerUpgrade()
 {
-        auto& pool = PlayerUpgrade::AvailableUpgrades[Rand::Rarity(0.02f, 0.1f, 0.25f)];
+        auto& pool = PlayerUpgrade::AvailableUpgrades[Rand::Rarity(0.025f, 0.1f, 0.3f)];
         if (pool.empty())
             return PlayerUpgrade::None;
         int i = Rand::Int(0, pool.size() - 1);

@@ -6,7 +6,7 @@
 
 namespace {
 	auto refDrawer_setup = Start::Create([]() {
-		RefDrawer::Font		  = gcnew Drawing::Font("微軟正黑體", 14);
+		RefDrawer::Font		  = gcnew Drawing::Font("微軟正黑體", Drawer::DefaultFontSize);
 		RefDrawer::Pen		  = gcnew Pen(Color(0,0,0).ToDrawingColor());
 		RefDrawer::SolidBrush = gcnew SolidBrush(Color(0, 0, 0).ToDrawingColor());
 		RefDrawer::PathBuffer = gcnew GraphicsPath();

@@ -27,6 +27,7 @@ public:
 
     float movedDistance = 0;
     float aliveTime = 0;
+    float color_h   = 0;
     vector<GameObject*> hit_history;
 
     const BulletInfo* bulletInfo = nullptr;

@@ -47,6 +47,7 @@ auto collide_ignore_setup = Start::Create([]() {
 	});
 
 bool DebugMode = false;
+bool is_init = true;
 auto object_update = Update::Create([]() {
 	auto objList = vector<GameObject*>(GameObject::GetInstances().begin(), GameObject::GetInstances().end());
 	auto objCount = objList.size();
@@ -113,6 +114,11 @@ auto object_update = Update::Create([]() {
 	}
 	for (auto obj : toDestroy)
 		delete obj;
+
+	if (is_init) {
+		PauseAndShowText("Use WS to move, AD to turn !\nPress \"F5\" to Start...", false);
+		is_init = false;
+	}
 	});
 
 auto render_update = Render::Create([]() {
@@ -120,11 +126,15 @@ auto render_update = Render::Create([]() {
 	sort(sorted_obj.begin(), sorted_obj.end(), [](GameObject* lhs, GameObject* rhs) { return lhs->render_layer < rhs->render_layer; });
 	RefGlobal::CurrentGraphics->InterpolationMode = Drawing::Drawing2D::InterpolationMode::NearestNeighbor;
 	for (auto* obj : sorted_obj) {
+		if (!obj->enable)
+			continue;
 		Drawer::SetRenderTarget(obj, Global::MainCamera);
 		obj->Render();
 	}
 	if (DebugMode) {
 		for (auto* obj : sorted_obj) {
+			if (!obj->enable)
+				continue;
 			Drawer::SetRenderTarget(obj, Global::MainCamera);
 			obj->collider.Render();
 		}

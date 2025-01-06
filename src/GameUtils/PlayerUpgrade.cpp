@@ -39,10 +39,10 @@ namespace {
     auto playerUpgrade_start =
     Start::Create([]() {
 
-    for (auto& pair : { make_pair(Rarity::Common, 5 ),
-                        make_pair(Rarity::Rare  , 10),
-                        make_pair(Rarity::Epic  , 15),
-                        make_pair(Rarity::Legend, 20)}){
+    for (auto& pair : { make_pair(Rarity::Common, 2 ),
+                        make_pair(Rarity::Rare  , 4),
+                        make_pair(Rarity::Epic  , 6),
+                        make_pair(Rarity::Legend, 10)}){
         PlayerUpgrade::AllUpgrades[pair.first].push_back(new PlayerUpgrade(
             "¤l¼u§ï¨}", 
             pair.first,
@@ -54,7 +54,7 @@ namespace {
                     EntityModifierOP   ::ADD, pair.second);
                 modifierBuffer.push_back(modifier);
                 Global::Player->AddModifier(modifier, numeric_limits<float>().max());
-            }, 5
+            }, numeric_limits<int>().max()
         ));
     }
 
@@ -73,7 +73,45 @@ namespace {
                     EntityModifierOP   ::ADD, pair.second);
                 modifierBuffer.push_back(modifier);
                 Global::Player->AddModifier(modifier, numeric_limits<float>().max());
+            }, numeric_limits<int>().max()
+        ));
+    }
+
+    for (auto& pair : { make_pair(Rarity::Common, 2),
+                        make_pair(Rarity::Rare  , 4),
+                        make_pair(Rarity::Epic  , 7),
+                        make_pair(Rarity::Legend, 10) }) {
+        PlayerUpgrade::AllUpgrades[pair.first].push_back(new PlayerUpgrade(
+            "¸Ë¥Ò§ï¨}",
+            pair.first,
+            FormatString(" - ¨üÀ»´î¶Ë + %d", pair.second),
+            [pair]() {
+                auto modifier = new EntityModifier(
+                    EntityModifierTypes::None | EntityModifierTypes::IsBuff,
+                    EntityModifierKey::Def,
+                    EntityModifierOP::ADD, pair.second);
+                modifierBuffer.push_back(modifier);
+                Global::Player->AddModifier(modifier, numeric_limits<float>().max());
             }, 5
+        ));
+    }
+
+    for (auto& pair : { make_pair(Rarity::Common, 0.5f),
+                        make_pair(Rarity::Rare  , 1.0f),
+                        make_pair(Rarity::Epic  , 1.5f),
+                        make_pair(Rarity::Legend, 2.5f) }) {
+        PlayerUpgrade::AllUpgrades[pair.first].push_back(new PlayerUpgrade(
+            "°O¾Ðª÷ÄÝ",
+            pair.first,
+            FormatString(" - ¥Í©R¦^´_ + %.1f/¨C¬í", pair.second),
+            [pair]() {
+                auto modifier = new EntityModifier(
+                    EntityModifierTypes::None | EntityModifierTypes::IsBuff,
+                    EntityModifierKey::RegHp,
+                    EntityModifierOP::ADD, pair.second);
+                modifierBuffer.push_back(modifier);
+                Global::Player->AddModifier(modifier, numeric_limits<float>().max());
+            }, 2
         ));
     }
 
@@ -83,16 +121,16 @@ namespace {
             "°ª¯Å¤l¼u°}¦C",
             pair.first,
             FormatString(" - ¤l¼uµo®g + %d\n", pair.second)     +
-            FormatString(" - ¤l¼u¶Ë®` - %d%" , pair.second * 10),
+            FormatString(" - ¤l¼u¶Ë®` - %d\%" , pair.second * 20),
             [pair]() {
                 auto modifier = new EntityModifier(
                     EntityModifierTypes::None | EntityModifierTypes::IsBuff,
                     EntityModifierKey  ::Atk,
-                    EntityModifierOP   ::MUL, pair.second * -0.1f);
+                    EntityModifierOP   ::MUL, pair.second * -0.2f);
                 modifierBuffer.push_back(modifier);
                 Global::Player->AddModifier(modifier, numeric_limits<float>().max());
                 Global::Player->bulletGenerator->WavePerShoot += pair.second;
-            }, 1
+            }, 3
         ));
     }
 
@@ -102,18 +140,18 @@ namespace {
         " - ¤l¼u³e¬ï + 1",
         []() {
             Global::Player->weapon_bulletInfo.Penetrate += 1;
-        }, 2
+        }, 4
     ));
 
     PlayerUpgrade::AllUpgrades[Rarity::Epic].push_back(new PlayerUpgrade(
         "¥ª°¼°Æ¬¶¤f",
         Rarity::Epic,
-        " - ¥ª°¼¤l¼u + 1\n - ¤l¼u¶Ë®` - 10%",
+        " - ¥ª°¼¤l¼u + 1\n - ¤l¼u¶Ë®` -20\%",
         []() {
             auto modifier = new EntityModifier(
                 EntityModifierTypes::None | EntityModifierTypes::IsBuff,
                 EntityModifierKey  ::Atk,
-                EntityModifierOP   ::MUL, -0.1f);
+                EntityModifierOP   ::MUL, -0.2f);
             modifierBuffer.push_back(modifier);
             Global::Player->AddModifier(modifier, numeric_limits<float>().max());
 
@@ -124,12 +162,12 @@ namespace {
     PlayerUpgrade::AllUpgrades[Rarity::Epic].push_back(new PlayerUpgrade(
         "¥k°¼°Æ¬¶¤f",
         Rarity::Epic,
-        " - ¥k°¼¤l¼u + 1\n - ¤l¼u¶Ë®` - 10%",
+        " - ¥k°¼¤l¼u + 1\n - ¤l¼u¶Ë®` -20\%",
         []() {
             auto modifier = new EntityModifier(
                 EntityModifierTypes::None | EntityModifierTypes::IsBuff,
                 EntityModifierKey::Atk,
-                EntityModifierOP::MUL, -0.1f);
+                EntityModifierOP::MUL, -0.2f);
             modifierBuffer.push_back(modifier);
             Global::Player->AddModifier(modifier, numeric_limits<float>().max());
 

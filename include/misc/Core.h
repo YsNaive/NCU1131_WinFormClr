@@ -142,6 +142,7 @@ public:
     static constexpr int Player  =  0;
     static constexpr int Exp     =  1;
     static constexpr int Monster = -1;
+    static constexpr int Effect  = -2;
 };
 
 class Anchor {

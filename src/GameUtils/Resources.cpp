@@ -11,5 +11,6 @@ namespace {
 
 		RefResources::NormalMonster  = Image::FromFile("./resources/monster/monster2.png");
 		RefResources::ShooterMonster = Image::FromFile("./resources/monster/monster1.png");
+		RefResources::HealMonster    = Image::FromFile("./resources/monster/monster3.png");
 		});
 }

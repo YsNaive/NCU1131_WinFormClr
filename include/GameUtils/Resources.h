@@ -20,4 +20,5 @@ public:
 
 	static Image^ NormalMonster;
 	static Image^ ShooterMonster;
+	static Image^ HealMonster;
 };

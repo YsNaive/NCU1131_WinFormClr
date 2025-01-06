@@ -5,7 +5,7 @@
 
 extern class PlayerUpgrade;
 
-void PauseAndShowText(const string& text);
+void PauseAndShowText(const string& text, bool show_exitBtn = true);
 
 class UI : public GameObject
 {
@@ -21,7 +21,7 @@ public:
     Anchor anchor;
     string text;
     Color color = Color(.1f, .1f, .1f);
-
+    int size = -1;
     virtual void Render() override;
 };
 
@@ -85,7 +85,18 @@ public:
     void AssignPlayerUpgrade(PlayerUpgrade& info);
 };
 
-class UI_UpgradeChoices : public UI {
-public:
+class UI_Button : public UI_Clickable {
+    Rect   bound;
+public: 
+    inline UI_Button(const string& label) 
+        :label(label) {} 
 
+    string label; 
+
+    float color_h = 90;
+    float color_s = 0.1f;
+
+    void SetBound(const Rect& bound);
+    inline const Rect& GetBound() { return this->bound; }
+    void Render() override; 
 };

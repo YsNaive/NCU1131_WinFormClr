@@ -27,6 +27,7 @@ public:
 
 class Drawer {
 public:
+    static constexpr int DefaultFontSize = 14;
     static void AddPosition(Vector2 position);
     static void AddRotation(float   rotation);
     static void AddScale   (Vector2 scale);

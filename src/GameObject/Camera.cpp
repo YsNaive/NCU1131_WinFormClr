@@ -12,30 +12,34 @@ namespace {
 		static Image^ f0;
 	};
 	auto render_bg = 
-	Render::Create([](){
-		RefGlobal::CurrentGraphics->ResetTransform();
-		float scale = Global::MainCamera->scale;
-		float width  = 200 * scale;
-		float gapOffset = width * 0.015f;
-		Vector2 begin_pos = Global::Player->position * scale;
-		begin_pos.x -= ((int)(begin_pos.x / width)) * width;
-		begin_pos.x = -begin_pos.x - width;
-		begin_pos.y -= ((int)(begin_pos.y / width)) * width;
-		begin_pos.y = -begin_pos.y - width;
-		Vector2 pos = begin_pos;
-		int c = 0;
-		if (ImgBuffer::f0 == nullptr ||
-			ImgBuffer::f0->Size.Width != width)
-			ImgBuffer::f0 = RefResources::ResizeImage(RefResources::ForestBackground, width, width);
-		while (pos.x < Global::ScreenSize.x) {
-			pos.y = begin_pos.y;
-			while (pos.y < Global::ScreenSize.y) {
-				Drawer::AddImage(ImgBuffer::f0, {pos, {width,width}});
-				pos.y += width - gapOffset;
-				c++;
+	Start::Create([](){ 
+		auto render_obj = new FuncGameObject(nullptr, []() {
+			RefGlobal::CurrentGraphics->ResetTransform();
+			float scale = Global::MainCamera->scale;
+			float width = 200 * scale;
+			float gapOffset = width * 0.015f;
+			Vector2 begin_pos = Global::Player->position * scale;
+			begin_pos.x -= ((int)(begin_pos.x / width)) * width;
+			begin_pos.x = -begin_pos.x - width;
+			begin_pos.y -= ((int)(begin_pos.y / width)) * width;
+			begin_pos.y = -begin_pos.y - width;
+			Vector2 pos = begin_pos;
+			int c = 0;
+			if (ImgBuffer::f0 == nullptr ||
+				ImgBuffer::f0->Size.Width != width)
+				ImgBuffer::f0 = RefResources::ResizeImage(RefResources::ForestBackground, width, width);
+			while (pos.x < Global::ScreenSize.x) {
+				pos.y = begin_pos.y;
+				while (pos.y < Global::ScreenSize.y) {
+					Drawer::AddImage(ImgBuffer::f0, { pos, {width,width} });
+					pos.y += width - gapOffset;
+					c++;
+				}
+				pos.x += width - gapOffset;
 			}
-			pos.x += width - gapOffset;
-		}
+		});
+		render_obj->render_layer = -99;
+		render_obj->tag.Add(Tag::DontDestroyOnReset);
 	});
 }
 
