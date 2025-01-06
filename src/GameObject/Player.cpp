@@ -90,8 +90,8 @@ void Player::ReciveExp(int value)
 			card->OnClick.push_back(closeFunc);
 			card->AssignPlayerUpgrade(Rand::PlayerUpgrade());
 		}
-		cards[0]->position.x -= cardSize.x * 1.5f;
-		cards[2]->position.x += cardSize.x * 1.5f;
+		cards[0]->position.x -= cardSize.x * 1.25f;
+		cards[2]->position.x += cardSize.x * 1.25f;
 	}
 }
 

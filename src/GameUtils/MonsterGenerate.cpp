@@ -17,6 +17,13 @@ namespace {
 		monster->Hp = monster->entityInfo_origin.MaxHp;
 	}
 
+	auto monster_generate_reset =
+	GameReset::Create([]() {
+		normal_monster_count  = 5;
+		shooter_monster_count = 0;
+		heal_monster_count    = 0;
+	});
+
 	auto monster_generate_flow =
 	Update::Create([]() {
 		normal_monster_count = 5 + (int)((Global::Time + 1) / 20.0);
