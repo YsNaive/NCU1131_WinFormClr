@@ -2,7 +2,6 @@
 
 #include "Core.h"
 #include "Window.h"
-extern class Player;
 extern class Camera;
 
 ref class RefGlobal {
@@ -35,5 +34,4 @@ public:
     static long long int UpdateCount;
 
     static Camera*  MainCamera;
-    static Player*  Player;
 };

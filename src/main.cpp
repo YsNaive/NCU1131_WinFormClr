@@ -116,7 +116,8 @@ auto object_update = Update::Create([]() {
 		delete obj;
 
 	if (is_init) {
-		PauseAndShowText("Use WS to move, AD to turn !\nPress \"F5\" to Start...", false);
+		// app init
+		
 		is_init = false;
 	}
 	});
@@ -141,6 +142,5 @@ auto render_update = Render::Create([]() {
 		RefGlobal::CurrentGraphics->ResetTransform();
 		Color textColor = { .2,.2,.2 };
 		Drawer::AddText(textColor, to_string(Global::UpdatePerSecond) + " u/sec", { 0,0 });
-		Drawer::AddText(textColor, Global::Player->position.to_string(), {0,15});
 	}
 	});

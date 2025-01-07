@@ -10,9 +10,6 @@
 #include "KeyBoardHandler.h";
 #include "Rand.h"
 #include "Drawer.h"
-#include "Entity.h"
-#include "Player.h"
-#include "Monster.h"
-#include "EffectArea.h"
 #include "GameManager.h"
+#include "UI.h"
 

@@ -59,46 +59,13 @@
     <ClCompile Include="src\GameObject\Camera.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObject\Entity.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\Player.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\Exp.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\Monster.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\Bullet.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\EffectArea.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameObject\UI.cpp">
-      <Filter>src\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameUI.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\misc\DamageInfo.cpp">
-      <Filter>src\misc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject\BulletGenerator.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject\GameManager.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp">
-      <Filter>src\GameUtils</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameUtils\Resources.cpp">
-      <Filter>src\GameUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameUtils\MonsterGenerate.cpp">
       <Filter>src\GameUtils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -139,41 +106,14 @@
     <ClInclude Include="include\GameObject\Camera.h">
       <Filter>include\GameObjcet</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameObject\Player.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\Entity.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\Exp.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\Monster.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\Bullet.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\EffectArea.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject\UI.h">
-      <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameObject\BulletGenerator.h">
       <Filter>include\GameObjcet</Filter>
     </ClInclude>
     <ClInclude Include="include\misc\DamageInfo.h">
       <Filter>include\misc</Filter>
     </ClInclude>
-    <ClInclude Include="include\misc\Prefab.h">
-      <Filter>include\misc</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject\GameManager.h">
       <Filter>include\GameObjcet</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameUtils\PlayerUpgrade.h">
-      <Filter>include\GameUtils</Filter>
     </ClInclude>
     <ClInclude Include="include\GameUtils\Resources.h">
       <Filter>include\GameUtils</Filter>

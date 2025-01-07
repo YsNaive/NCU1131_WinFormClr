@@ -5,8 +5,6 @@
 
 extern class PlayerUpgrade;
 
-void PauseAndShowText(const string& text, bool show_exitBtn = true);
-
 class UI : public GameObject
 {
 public:
@@ -65,24 +63,6 @@ public:
 
     void Update() override;
     void Render() override;
-};
-
-class UI_Card : public UI_Clickable {
-public:
-    inline UI_Card(Vector2 size = { 180,300 })
-        :size(size) { collider.AddRect({ {0,0}, size }); }
-
-    string label;
-    string description;
-
-    const Vector2 size;
-    float padding = 10;
-    float hue = 0;
-
-    float labelHeightPercent = 0.15f;
-
-    void Render()  override;
-    void AssignPlayerUpgrade(PlayerUpgrade& info);
 };
 
 class UI_Button : public UI_Clickable {

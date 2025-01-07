@@ -131,24 +131,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameObject\Bullet.cpp" />
-    <ClCompile Include="src\GameObject\BulletGenerator.cpp" />
     <ClCompile Include="src\GameObject\Camera.cpp" />
-    <ClCompile Include="src\GameObject\EffectArea.cpp" />
-    <ClCompile Include="src\GameObject\Entity.cpp" />
-    <ClCompile Include="src\GameObject\Exp.cpp" />
     <ClCompile Include="src\GameObject\GameManager.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
-    <ClCompile Include="src\GameObject\Monster.cpp" />
-    <ClCompile Include="src\GameObject\Player.cpp" />
     <ClCompile Include="src\GameObject\UI.cpp" />
-    <ClCompile Include="src\GameUI.cpp" />
-    <ClCompile Include="src\GameUtils\MonsterGenerate.cpp" />
-    <ClCompile Include="src\GameUtils\PlayerUpgrade.cpp" />
     <ClCompile Include="src\GameUtils\Resources.cpp" />
     <ClCompile Include="src\misc\callib.cpp" />
     <ClCompile Include="src\misc\Core.cpp" />
-    <ClCompile Include="src\misc\DamageInfo.cpp" />
     <ClCompile Include="src\misc\Drawer.cpp" />
     <ClCompile Include="src\misc\Global.cpp" />
     <ClCompile Include="src\misc\KeyBoardHandler.cpp" />
@@ -158,18 +147,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h" />
-    <ClInclude Include="include\GameObject\Bullet.h" />
-    <ClInclude Include="include\GameObject\BulletGenerator.h" />
     <ClInclude Include="include\GameObject\Camera.h" />
-    <ClInclude Include="include\GameObject\EffectArea.h" />
-    <ClInclude Include="include\GameObject\Entity.h" />
-    <ClInclude Include="include\GameObject\Exp.h" />
     <ClInclude Include="include\GameObject\GameManager.h" />
     <ClInclude Include="include\GameObject\GameObject.h" />
-    <ClInclude Include="include\GameObject\Monster.h" />
-    <ClInclude Include="include\GameObject\Player.h" />
     <ClInclude Include="include\GameObject\UI.h" />
-    <ClInclude Include="include\GameUtils\PlayerUpgrade.h" />
     <ClInclude Include="include\GameUtils\Resources.h" />
     <ClInclude Include="include\misc\callib.h" />
     <ClInclude Include="include\misc\callib_config.h" />
@@ -179,7 +160,6 @@
     <ClInclude Include="include\misc\Global.h" />
     <ClInclude Include="include\misc\KeyBoardHandler.h" />
     <ClInclude Include="include\misc\MouseHandler.h" />
-    <ClInclude Include="include\misc\Prefab.h" />
     <ClInclude Include="include\misc\Rand.h" />
     <ClInclude Include="include\Window.h" />
   </ItemGroup>

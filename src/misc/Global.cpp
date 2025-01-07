@@ -3,7 +3,6 @@
 
 #include "Core.h"
 #include "Camera.h"
-#include "Player.h"
 #include "MouseHandler.h"
 #include "KeyBoardHandler.h"
 
@@ -20,7 +19,6 @@ int     Global::UpdatePerSecond = 0;
 long long int Global::UpdateCount = 0;
 
 Camera* Global::MainCamera = nullptr;
-Player* Global::Player     = nullptr;
 
 namespace {
 	vector<float> ups_buffer;
@@ -29,7 +27,6 @@ namespace {
 	auto value_preset = Start::Create([]() {
 		ups_buffer.resize(10);
 		Global::MainCamera = new Camera();
-		Global::Player = new Player();
 		});
 
 	auto value_set = PreUpdate::Create([]() {
@@ -55,9 +52,6 @@ namespace {
 		for (float ups : ups_buffer)
 			ups_sum += ups;
 		Global::UpdatePerSecond = (int)(ups_sum / 10.0f);
-
-		// camera
-		Global::MainCamera->targetPosition = Global::Player->position;
 		});
 
 	auto value_clear = LateUpdate::Create([]() {

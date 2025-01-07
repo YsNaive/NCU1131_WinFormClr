@@ -1,7 +1,6 @@
 #include "GameManager.h"
 
 #include "Global.h"
-#include "Player.h"
 #include "Camera.h"
 
 namespace {
@@ -25,7 +24,6 @@ void GameManager::Reset()
 {
     Pause();
     GameReset::Invoke();
-    Global::MainCamera->position = Global::Player->position;
 
     for (auto& obj : GameObject::GetInstances()) {
         if (!obj->tag.Contains(Tag::DontDestroyOnReset))
