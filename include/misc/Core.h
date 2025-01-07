@@ -110,13 +110,8 @@ class Tag {
 public:
     static const int None      = 0;
     static const int DontDestroyOnReset = 1 << 0;
-    static const int Entity    = 1 << 1;
-    static const int Player    = 1 << 2;
-    static const int Monster   = 1 << 3;
-    static const int Bullet    = 1 << 4;
-    static const int Exp       = 1 << 5;
-    static const int UI        = 1 << 6;
-    static const int Clickable = 1 << 7;
+    static const int UI        = 1 << 1;
+    static const int Clickable = 1 << 2;
 
     int flag = 0;
     inline void Add(const int value) { flag |= value; }

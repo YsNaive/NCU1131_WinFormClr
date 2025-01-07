@@ -155,7 +155,6 @@
     <ClInclude Include="include\misc\callib.h" />
     <ClInclude Include="include\misc\callib_config.h" />
     <ClInclude Include="include\misc\Core.h" />
-    <ClInclude Include="include\misc\DamageInfo.h" />
     <ClInclude Include="include\misc\Drawer.h" />
     <ClInclude Include="include\misc\Global.h" />
     <ClInclude Include="include\misc\KeyBoardHandler.h" />

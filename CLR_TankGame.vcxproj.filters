@@ -109,9 +109,6 @@
     <ClInclude Include="include\GameObject\UI.h">
       <Filter>include\GameObjcet</Filter>
     </ClInclude>
-    <ClInclude Include="include\misc\DamageInfo.h">
-      <Filter>include\misc</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject\GameManager.h">
       <Filter>include\GameObjcet</Filter>
     </ClInclude>

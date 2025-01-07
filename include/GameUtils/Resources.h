@@ -14,11 +14,6 @@ public:
         return resizedBitmap;
     }
 
-	static List<Image^>^ TankBodys;
-	static Image^ TankGun;
-	static Image^ ForestBackground;
-
-	static Image^ NormalMonster;
-	static Image^ ShooterMonster;
-	static Image^ HealMonster;
+	static List<Image^>^ Imgs;
+	static Image^ Img;
 };
